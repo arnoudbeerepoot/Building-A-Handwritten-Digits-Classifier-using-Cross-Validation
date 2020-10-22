@@ -1,0 +1,1011 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Building A Handwritten Digits Classifier using Cross Validation &#8212; Building A Handwritten Digits Classifier using Cross Validation</title>
+    
+  <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="_static/sphinx-book-theme.2d2078699c18a0efb88233928e1cf6ed.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.3da636dd464baa7582d2.js">
+
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/togglebutton.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript">var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script type="text/javascript" src="_static/sphinx-book-theme.be0a4a0c39cd630af62a2fcf693f3f06.js"></script>
+    <script async="async" type="text/javascript" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script type="text/javascript">
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" type="text/javascript" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Building A Handwritten Digits Classifier using Cross Validation" href="landing-page.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">Building A Handwritten Digits Classifier using Cross Validation</h1>
+  
+</a>
+</div>
+
+<form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="landing-page.html">
+   Building A Handwritten Digits Classifier using Cross Validation
+  </a>
+ </li>
+</ul>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Building A Handwritten Digits Classifier using Cross Validation
+  </a>
+ </li>
+</ul>
+
+</nav>
+
+ <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        <div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/HandwrittenDigitsClassifierUsingCrossValidation.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+    
+</div>
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/arnoudbeerepoot/Building-A-Handwritten-Digits-Classifier-using-Cross-Validation"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/arnoudbeerepoot/Building-A-Handwritten-Digits-Classifier-using-Cross-Validation/issues/new?title=Issue%20on%20page%20%2FHandwrittenDigitsClassifierUsingCrossValidation.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/arnoudbeerepoot/Building-A-Handwritten-Digits-Classifier-using-Cross-Validation/master?urlpath=tree/HandwrittenDigitsClassifierUsingCrossValidation.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#k-nearest-neighbors-algorithm">
+   K-nearest neighbors algorithm
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#conclusion">
+   Conclusion
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="building-a-handwritten-digits-classifier-using-cross-validation">
+<h1>Building A Handwritten Digits Classifier using Cross Validation<a class="headerlink" href="#building-a-handwritten-digits-classifier-using-cross-validation" title="Permalink to this headline">¶</a></h1>
+<p>In this project machine learning using k-fold cross validation is used to build a handwritten digits classifier.</p>
+<p>In machine learning normally a dataset is split in a training set to train the model and a test set to validate the model on data it has never seen before. It is common to use a split of 80/20 for the training/test set. When you don’t have a large dataset this will result in a small test set which is only 20% of this data. Cross validation is used to overcome this problem. In cross validation the data is splitted more than ones (k times). As a result after all iterations all data is used as test set as can be seen in the figure below where the data is splitted in 6 folds (k=6).</p>
+<p><img align="left" src="../images/Cross_validation_k6.PNG">  <br>
+<br>
+<br>
+<br>
+<br>
+<br></p>
+<p>Splitting the data in a training and test set used for cross validation can be done in several ways. It is possible to use a standard library or you can write the code yourself. At the start of this project I planned to use the standard library KFold from sklearn, but after a while I was curious if it was possible to write the code myself to get the same result. As a result the k-nearest neighbor algorithm with cross validation is used to build a handwritten digits classifier. For the cross validation the standard library Kfold is used and besides that I wrote the code myself to get the same results.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#import the libraries to be used</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="k">import</span> <span class="n">load_digits</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="k">import</span> <span class="n">KNeighborsClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">cross_val_score</span><span class="p">,</span> <span class="n">KFold</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="k">import</span> <span class="n">shuffle</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+</div>
+</div>
+<p>The dataset with images to be used for the training the machine learning algorithm can be imported from sklearn.datasets using load_digits. The library is imported above and the data is loaded below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># get the digits data and show the array</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">load_digits</span><span class="p">(</span><span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 0.,  0.,  5., ...,  0.,  0.,  0.],
+       [ 0.,  0.,  0., ..., 10.,  0.,  0.],
+       [ 0.,  0.,  0., ..., 16.,  9.,  0.],
+       ...,
+       [ 0.,  0.,  1., ...,  6.,  0.,  0.],
+       [ 0.,  0.,  2., ..., 12.,  0.,  0.],
+       [ 0.,  0., 10., ..., 12.,  1.,  0.]])
+</pre></div>
+</div>
+</div>
+</div>
+<p>The data is loaded in a Numpy 2D array and for further processing it is needed to transform it into a pandas dataframe</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#transform the Numpy 2D array into a pandas dataframe</span>
+<span class="n">digits</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">tar</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="c1"># create an array with values</span>
+<span class="n">digits</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>7</th>
+      <th>8</th>
+      <th>9</th>
+      <th>...</th>
+      <th>54</th>
+      <th>55</th>
+      <th>56</th>
+      <th>57</th>
+      <th>58</th>
+      <th>59</th>
+      <th>60</th>
+      <th>61</th>
+      <th>62</th>
+      <th>63</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>5.0</td>
+      <td>13.0</td>
+      <td>9.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>6.0</td>
+      <td>13.0</td>
+      <td>10.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>12.0</td>
+      <td>13.0</td>
+      <td>5.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>11.0</td>
+      <td>16.0</td>
+      <td>10.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>15.0</td>
+      <td>12.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>5.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>11.0</td>
+      <td>16.0</td>
+      <td>9.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>7.0</td>
+      <td>15.0</td>
+      <td>13.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>8.0</td>
+      <td>...</td>
+      <td>9.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>7.0</td>
+      <td>13.0</td>
+      <td>13.0</td>
+      <td>9.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>11.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>16.0</td>
+      <td>4.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>1792</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>4.0</td>
+      <td>10.0</td>
+      <td>13.0</td>
+      <td>6.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>...</td>
+      <td>4.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>14.0</td>
+      <td>15.0</td>
+      <td>9.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>1793</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>6.0</td>
+      <td>16.0</td>
+      <td>13.0</td>
+      <td>11.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>6.0</td>
+      <td>16.0</td>
+      <td>14.0</td>
+      <td>6.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>1794</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>11.0</td>
+      <td>15.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>9.0</td>
+      <td>13.0</td>
+      <td>6.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>1795</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>10.0</td>
+      <td>7.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>5.0</td>
+      <td>12.0</td>
+      <td>16.0</td>
+      <td>12.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>1796</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>10.0</td>
+      <td>14.0</td>
+      <td>8.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>...</td>
+      <td>8.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>8.0</td>
+      <td>12.0</td>
+      <td>14.0</td>
+      <td>12.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>1797 rows × 64 columns</p>
+</div></div></div>
+</div>
+<p>As you can see in the dataframe above the digits are described with a set of 64 numbers which represent a value on a gray scale. Below for a selection of 9 digits the numbers of the gray scale are transformed into an image, which can be plotted.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot 9 images from the dataframe</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">16</span><span class="p">))</span>
+
+<span class="n">select_rows</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">300</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1100</span><span class="p">,</span><span class="mi">1200</span><span class="p">,</span><span class="mi">1300</span><span class="p">,</span> <span class="mi">1400</span><span class="p">]</span>
+
+<span class="n">columns</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">columns</span><span class="o">*</span><span class="n">rows</span> <span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">first_image</span> <span class="o">=</span> <span class="n">digits</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">select_rows</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">np_image</span> <span class="o">=</span> <span class="n">first_image</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">np_image</span> <span class="o">=</span> <span class="n">np_image</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np_image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray_r&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/HandwrittenDigitsClassifierUsingCrossValidation_8_0.png" src="_images/HandwrittenDigitsClassifierUsingCrossValidation_8_0.png" />
+</div>
+</div>
+<div class="section" id="k-nearest-neighbors-algorithm">
+<h2>K-nearest neighbors algorithm<a class="headerlink" href="#k-nearest-neighbors-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>Below the workflow for k-fold cross validation algorithm is described:</p>
+<ul class="simple">
+<li><p>start with splitting the full dataset into k equal length partitions.</p></li>
+<li><p>selecting k-1 partitions as the training set and</p></li>
+<li><p>selecting the remaining partition as the test set (values between t0 and t1)</p></li>
+</ul>
+<p><img align="left" src="../images/Cross_validation.PNG">  <br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br></p>
+<ul class="simple">
+<li><p>training the model on the training set.</p></li>
+<li><p>using trained model to predict labels on the test fold.</p></li>
+<li><p>computing the test fold’s error metric.</p></li>
+<li><p>repeating all of the above steps k-1 times, until each partition has been used as the test set for an iteration.</p></li>
+<li><p>calculating the mean of the k error values.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># function for cross validation (k fold cross validation)</span>
+
+<span class="n">k</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="k">def</span> <span class="nf">cross_validation</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+    <span class="n">kf</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">knn</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span>
+    <span class="n">mses</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">knn</span><span class="p">,</span> <span class="n">digits</span><span class="p">,</span> <span class="n">tar</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">kf</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mses</span>
+
+<span class="n">cross_val_score</span> <span class="o">=</span> <span class="n">cross_validation</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="n">cross_val_score</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([0.99333333, 0.98333333, 0.97666667, 0.98662207, 0.98662207,
+       0.98662207])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Above the results for the 6 iterations of the cross validation using the KFold function are shown. Below the function is written by myself and the results are the same as from the workflow above.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Workflow for k-fold cross validation</span>
+<span class="n">k</span> <span class="o">=</span> <span class="mi">6</span>
+
+<span class="c1"># function for training k-nn models</span>
+
+<span class="k">def</span> <span class="nf">training</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="n">knn</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span>
+    <span class="n">knn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">knn</span> 
+
+<span class="c1"># function for test k-nn models</span>
+
+<span class="k">def</span> <span class="nf">testing</span><span class="p">(</span><span class="n">knn</span><span class="p">,</span> <span class="n">test_set</span><span class="p">):</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">knn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_set</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">predictions</span>
+
+<span class="c1"># function for cross validation (k fold cross validation)</span>
+
+<span class="k">def</span> <span class="nf">cross_validation</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">y_test_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+        <span class="c1">#Determine the size to be used for splitting the dataset</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">t1</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">step</span><span class="p">))</span>
+        <span class="n">new_step</span> <span class="o">=</span> <span class="n">t1</span><span class="o">-</span><span class="n">t0</span>        
+        
+        <span class="c1">#shuffle the digits en tar dataset</span>
+        <span class="n">digits_shuffled</span><span class="p">,</span> <span class="n">tar_shuffled</span> <span class="o">=</span> <span class="n">shuffle</span><span class="p">(</span><span class="n">digits</span><span class="p">,</span> <span class="n">tar</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="c1">#Create the train en test sets (X_train, y_train, X_test, y_test)</span>
+        
+        <span class="c1">#for X_train select values &lt; t0 and &gt; t1 and concatenate the data</span>
+        <span class="n">X0</span> <span class="o">=</span> <span class="n">digits_shuffled</span><span class="p">[:</span><span class="n">t0</span><span class="p">]</span>
+        <span class="n">X1</span> <span class="o">=</span> <span class="n">digits_shuffled</span><span class="p">[</span><span class="n">t1</span><span class="p">:]</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">X0</span><span class="p">,</span> <span class="n">X1</span><span class="p">]</span>
+        <span class="n">X_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+        
+        <span class="c1">#for y_train select values &lt; t0 and &gt; t1 and concatenate the data</span>
+        <span class="n">y0</span> <span class="o">=</span> <span class="n">tar_shuffled</span><span class="p">[:</span><span class="n">t0</span><span class="p">]</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">tar_shuffled</span><span class="p">[</span><span class="n">t1</span><span class="p">:]</span>
+        <span class="n">frames_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">]</span>
+        <span class="n">y_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">frames_y</span><span class="p">)</span>
+        
+        <span class="c1">#for the test set select values between t0 and t1</span>
+        <span class="n">X_test</span> <span class="o">=</span> <span class="n">digits_shuffled</span><span class="p">[</span><span class="n">t0</span><span class="p">:</span><span class="n">t1</span><span class="p">]</span>
+        <span class="n">y_test</span> <span class="o">=</span> <span class="n">tar_shuffled</span><span class="p">[</span><span class="n">t0</span><span class="p">:</span><span class="n">t1</span><span class="p">]</span>
+        
+        <span class="c1">#train en test the model</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">training</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+        <span class="n">prediction</span> <span class="o">=</span> <span class="n">testing</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
+        <span class="n">correct</span> <span class="o">=</span> <span class="n">prediction</span> <span class="o">-</span> <span class="n">y_test</span>
+        <span class="n">number_correct</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">correct</span><span class="p">[</span><span class="n">correct</span><span class="o">==</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">new_step</span>
+        
+        <span class="c1">#store the results to be returned in the end</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">number_correct</span><span class="p">)</span>
+        <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
+        <span class="n">y_test_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span>
+        
+        <span class="c1">#Set t0 for the next iteration</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">t1</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">y_test_list</span>
+
+<span class="n">result_tot</span><span class="p">,</span> <span class="n">predict_y</span><span class="p">,</span> <span class="n">y_test_list</span> <span class="o">=</span> <span class="n">cross_validation</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="n">result_tot</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.9933333333333333,
+ 0.9833333333333333,
+ 0.9766666666666667,
+ 0.9866220735785953,
+ 0.9866220735785953,
+ 0.9866220735785953]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now the score of the 6 iterations is present. The next step is to calculate the mean of the 6 error values.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate the mean of the k error values</span>
+<span class="n">mean_score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">result_tot</span><span class="p">)</span>
+<span class="n">mean_score</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9855332590115199
+</pre></div>
+</div>
+</div>
+</div>
+<p>After calculating the mean error value, it is interesting to see which digit is not predicted correctly. Below a list is shown of the predictions which are not correct</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># predictions vs expected results from the testset</span>
+
+<span class="n">predict_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">predict_y</span><span class="p">)</span>
+<span class="n">y_test_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">y_test_list</span><span class="p">)</span>
+
+<span class="n">predict_result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">predict_y</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;predictions&#39;</span><span class="p">])</span>
+<span class="n">predict_result</span><span class="p">[</span><span class="s1">&#39;y_test&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">y_test_list</span>
+
+<span class="c1"># select the items where the prediction is not equal to the expected result</span>
+<span class="n">wrong</span> <span class="o">=</span> <span class="n">predict_result</span><span class="p">[</span><span class="n">predict_result</span><span class="p">[</span><span class="s1">&#39;predictions&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">predict_result</span><span class="p">[</span><span class="s1">&#39;y_test&#39;</span><span class="p">]]</span>
+<span class="n">wrong</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>predictions</th>
+      <th>y_test</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>249</td>
+      <td>9</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <td>298</td>
+      <td>7</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>462</td>
+      <td>5</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>523</td>
+      <td>1</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td>537</td>
+      <td>5</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <td>540</td>
+      <td>8</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <td>576</td>
+      <td>1</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <td>609</td>
+      <td>3</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <td>635</td>
+      <td>7</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>648</td>
+      <td>3</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <td>683</td>
+      <td>6</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <td>748</td>
+      <td>3</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td>768</td>
+      <td>7</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>799</td>
+      <td>3</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <td>957</td>
+      <td>9</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <td>1032</td>
+      <td>8</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>1089</td>
+      <td>4</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <td>1090</td>
+      <td>7</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>1336</td>
+      <td>8</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>1371</td>
+      <td>1</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td>1388</td>
+      <td>8</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>1448</td>
+      <td>7</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>1515</td>
+      <td>1</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td>1577</td>
+      <td>1</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td>1633</td>
+      <td>1</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td>1786</td>
+      <td>1</td>
+      <td>8</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>In the table above the 26 results out of 1797 are shown which are not predicted correctly</p>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h2>
+<p>In this project machine learning using k-fold cross validation is used to build a handwritten digits classifier.
+The k-fold cross validation is demonstrated using the KFold function from sklearn and it is compared to a workflow written by myself to get the same results. As the outcome of both methods is the same, it can be concluded that it is possible to write your own code to create a workflow for cross validation. It was a nice learning experience for me to get more insights of the internals of a standard function like KFold.
+The algorithm which is built in this project can predict a digit which is correct in 98.55% of the cases.</p>
+<p>Next steps:</p>
+<ul class="simple">
+<li><p>Try making changes in the workflow to improve correct predictions percentage</p></li>
+<li><p>Use the existing pipeline to try other machine learning models like Decision Tree Models or Random Forest Models</p></li>
+</ul>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="landing-page.html" title="previous page">Building A Handwritten Digits Classifier using Cross Validation</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Arnoud Beerepoot<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>
