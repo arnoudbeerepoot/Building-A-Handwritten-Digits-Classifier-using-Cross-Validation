@@ -7,7 +7,7 @@
 # 
 # In machine learning normally a dataset is split in a training set to train the model and a test set to validate the model on data it has never seen before. It is common to use a split of 80/20 for the training/test set. When you don't have a large dataset this will result in a small test set which is only 20% of this data. Cross validation is used to overcome this problem. In cross validation the data is splitted more than ones (k times). As a result after all iterations all data is used as test set as can be seen in the figure below where the data is splitted in 6 folds (k=6).
 # 
-#  <img align="left" src="/_images/Cross_validation_k6.PNG">  <br>
+#  <img align="left" src="_images/Cross_validation_k6.PNG">  <br>
 #  <br>
 #  <br>
 #  <br>
@@ -84,7 +84,7 @@ plt.show()
 #  - selecting k-1 partitions as the training set and
 #  - selecting the remaining partition as the test set (values between t0 and t1)
 #  
-#  <img align="left" src="/_images/Cross_validation.PNG">  <br>
+#  <img align="left" src="_images/Cross_validation.PNG">  <br>
 #  <br>
 #  <br>
 #  <br>
