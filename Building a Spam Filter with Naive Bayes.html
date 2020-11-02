@@ -1,0 +1,3476 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Building a Spam Filter with Naive Bayes &#8212; My Jupyter books</title>
+    
+  <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="_static/sphinx-book-theme.2d2078699c18a0efb88233928e1cf6ed.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.3da636dd464baa7582d2.js">
+
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/togglebutton.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript">var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script type="text/javascript" src="_static/sphinx-book-theme.be0a4a0c39cd630af62a2fcf693f3f06.js"></script>
+    <script async="async" type="text/javascript" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script type="text/javascript">
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" type="text/javascript" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Building A Handwritten Digits Classifier using Cross Validation" href="HandwrittenDigitsClassifierUsingCrossValidation.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">My Jupyter books</h1>
+  
+</a>
+</div>
+
+<form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="landing-page.html">
+   My Jupyter books
+  </a>
+ </li>
+</ul>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="HandwrittenDigitsClassifierUsingCrossValidation.html">
+   Building A Handwritten Digits Classifier using Cross Validation
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Building a Spam Filter with Naive Bayes
+  </a>
+ </li>
+</ul>
+
+</nav>
+
+ <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        <div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/Building a Spam Filter with Naive Bayes.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+    
+</div>
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/arnoudbeerepoot/Building-A-Handwritten-Digits-Classifier-using-Cross-Validation"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/arnoudbeerepoot/Building-A-Handwritten-Digits-Classifier-using-Cross-Validation/issues/new?title=Issue%20on%20page%20%2FBuilding a Spam Filter with Naive Bayes.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/arnoudbeerepoot/Building-A-Handwritten-Digits-Classifier-using-Cross-Validation/master?urlpath=tree/Building a Spam Filter with Naive Bayes.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#import-dataset-and-analyze-the-data">
+   Import dataset and analyze the data
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#create-a-train-and-test-set">
+   Create a train and test set
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#clean-the-dataset">
+   Clean the dataset
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="building-a-spam-filter-with-naive-bayes">
+<h1>Building a Spam Filter with Naive Bayes<a class="headerlink" href="#building-a-spam-filter-with-naive-bayes" title="Permalink to this headline">¶</a></h1>
+<p>In this project a spam filter is built based on the Naive Bayes algorithm. It will be used to classify SMS messages as spam or non-spam. The spam-filter is being trained with a dataset of 5572 SMS messages that are already classified by humans (The UCI Machine Learning Repository) (https://archive.ics.uci.edu/ml/datasets/sms+spam+collection)
+See wikipedia for background information (https://en.wikipedia.org/wiki/Naive_Bayes_classifier)</p>
+<div class="section" id="import-dataset-and-analyze-the-data">
+<h2>Import dataset and analyze the data<a class="headerlink" href="#import-dataset-and-analyze-the-data" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;SMSSpamCollection&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">,</span> <span class="s1">&#39;SMS&#39;</span><span class="p">])</span> 
+<span class="n">data</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">FileNotFoundError</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mf">37e764</span><span class="n">a5d2ec</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> 
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;SMSSpamCollection&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">,</span> <span class="s1">&#39;SMS&#39;</span><span class="p">])</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">data</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+
+<span class="nn">~\Anaconda3\lib\site-packages\pandas\io\parsers.py</span> in <span class="ni">parser_f</span><span class="nt">(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, squeeze, prefix, mangle_dupe_cols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, dialect, error_bad_lines, warn_bad_lines, delim_whitespace, low_memory, memory_map, float_precision)</span>
+<span class="g g-Whitespace">    </span><span class="mi">683</span>         <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">684</span> 
+<span class="ne">--&gt; </span><span class="mi">685</span>         <span class="k">return</span> <span class="n">_read</span><span class="p">(</span><span class="n">filepath_or_buffer</span><span class="p">,</span> <span class="n">kwds</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">686</span> 
+<span class="g g-Whitespace">    </span><span class="mi">687</span>     <span class="n">parser_f</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span>
+
+<span class="nn">~\Anaconda3\lib\site-packages\pandas\io\parsers.py</span> in <span class="ni">_read</span><span class="nt">(filepath_or_buffer, kwds)</span>
+<span class="g g-Whitespace">    </span><span class="mi">455</span> 
+<span class="g g-Whitespace">    </span><span class="mi">456</span>     <span class="c1"># Create the parser.</span>
+<span class="ne">--&gt; </span><span class="mi">457</span>     <span class="n">parser</span> <span class="o">=</span> <span class="n">TextFileReader</span><span class="p">(</span><span class="n">fp_or_buf</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">458</span> 
+<span class="g g-Whitespace">    </span><span class="mi">459</span>     <span class="k">if</span> <span class="n">chunksize</span> <span class="ow">or</span> <span class="n">iterator</span><span class="p">:</span>
+
+<span class="nn">~\Anaconda3\lib\site-packages\pandas\io\parsers.py</span> in <span class="ni">__init__</span><span class="nt">(self, f, engine, **kwds)</span>
+<span class="g g-Whitespace">    </span><span class="mi">893</span>             <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;has_index_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s2">&quot;has_index_names&quot;</span><span class="p">]</span>
+<span class="g g-Whitespace">    </span><span class="mi">894</span> 
+<span class="ne">--&gt; </span><span class="mi">895</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_make_engine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">896</span> 
+<span class="g g-Whitespace">    </span><span class="mi">897</span>     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<span class="nn">~\Anaconda3\lib\site-packages\pandas\io\parsers.py</span> in <span class="ni">_make_engine</span><span class="nt">(self, engine)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1133</span>     <span class="k">def</span> <span class="nf">_make_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">):</span>
+<span class="g g-Whitespace">   </span><span class="mi">1134</span>         <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">1135</span>             <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">CParserWrapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1136</span>         <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1137</span>             <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;python&quot;</span><span class="p">:</span>
+
+<span class="nn">~\Anaconda3\lib\site-packages\pandas\io\parsers.py</span> in <span class="ni">__init__</span><span class="nt">(self, src, **kwds)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1915</span>         <span class="n">kwds</span><span class="p">[</span><span class="s2">&quot;usecols&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">usecols</span>
+<span class="g g-Whitespace">   </span><span class="mi">1916</span> 
+<span class="ne">-&gt; </span><span class="mi">1917</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">parsers</span><span class="o">.</span><span class="n">TextReader</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1918</span>         <span class="bp">self</span><span class="o">.</span><span class="n">unnamed_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">unnamed_cols</span>
+<span class="g g-Whitespace">   </span><span class="mi">1919</span> 
+
+<span class="nn">pandas\_libs\parsers.pyx</span> in <span class="ni">pandas._libs.parsers.TextReader.__cinit__</span><span class="nt">()</span>
+
+<span class="nn">pandas\_libs\parsers.pyx</span> in <span class="ni">pandas._libs.parsers.TextReader._setup_parser_source</span><span class="nt">()</span>
+
+<span class="ne">FileNotFoundError</span>: [Errno 2] File b&#39;SMSSpamCollection&#39; does not exist: b&#39;SMSSpamCollection&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># show the first five rows</span>
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Label</th>
+      <th>SMS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>ham</td>
+      <td>Go until jurong point, crazy.. Available only ...</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>ham</td>
+      <td>Ok lar... Joking wif u oni...</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>spam</td>
+      <td>Free entry in 2 a wkly comp to win FA Cup fina...</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>ham</td>
+      <td>U dun say so early hor... U c already then say...</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>ham</td>
+      <td>Nah I don't think he goes to usf, he lives aro...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># how many spam vs non-spam messages are in the dataset?</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ham     4825
+spam     747
+Name: Label, dtype: int64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">percentage_spam</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="mi">747</span><span class="o">/</span><span class="p">(</span><span class="mi">4825</span><span class="o">+</span><span class="mi">747</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="s2">&quot;In the dataset </span><span class="si">{}</span><span class="s2"> </span><span class="si">% o</span><span class="s2">f the messages is spam&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">percentage_spam</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;In the dataset 13.4 % of the messages is spam&#39;
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="create-a-train-and-test-set">
+<h2>Create a train and test set<a class="headerlink" href="#create-a-train-and-test-set" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Randomize the entire dataset</span>
+<span class="n">random</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Split the randomized dataset in a train and test set</span>
+<span class="c1"># 80% is training that is 4458 records</span>
+<span class="n">train</span> <span class="o">=</span> <span class="n">random</span><span class="p">[:</span><span class="mi">4458</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">test</span> <span class="o">=</span> <span class="n">random</span><span class="p">[</span><span class="mi">4458</span><span class="p">:]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">train</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+RangeIndex: 4458 entries, 0 to 4457
+Data columns (total 2 columns):
+Label    4458 non-null object
+SMS      4458 non-null object
+dtypes: object(2)
+memory usage: 69.8+ KB
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># number of ham and spam messages in the train set</span>
+<span class="n">train</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ham     3858
+spam     600
+Name: Label, dtype: int64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">percentage_spam_train</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="mi">600</span><span class="o">/</span><span class="p">(</span><span class="mi">3858</span><span class="o">+</span><span class="mi">600</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="s2">&quot;In the training dataset </span><span class="si">{}</span><span class="s2"> </span><span class="si">% o</span><span class="s2">f the messages is spam&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">percentage_spam_train</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;In the training dataset 13.5 % of the messages is spam&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># number of ham and spam messages in the test set</span>
+<span class="n">test</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ham     967
+spam    147
+Name: Label, dtype: int64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">percentage_spam_test</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="mi">147</span><span class="o">/</span><span class="p">(</span><span class="mi">967</span><span class="o">+</span><span class="mi">147</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="s2">&quot;In the test dataset </span><span class="si">{}</span><span class="s2"> </span><span class="si">% o</span><span class="s2">f the messages is spam&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">percentage_spam_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;In the test dataset 13.2 % of the messages is spam&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<p>Percentages of spam messages in train en test set are in the same range as the original dataset.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Label</th>
+      <th>SMS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>ham</td>
+      <td>Yep, by the pretty sculpture</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>ham</td>
+      <td>Yes, princess. Are you going to make me moan?</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>ham</td>
+      <td>Welp apparently he retired</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>ham</td>
+      <td>Havent.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>ham</td>
+      <td>I forgot 2 ask ü all smth.. There's a card on ...</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>ham</td>
+      <td>Ok i thk i got it. Then u wan me 2 come now or...</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>ham</td>
+      <td>I want kfc its Tuesday. Only buy 2 meals ONLY ...</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>ham</td>
+      <td>No dear i was sleeping :-P</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>ham</td>
+      <td>Ok pa. Nothing problem:-)</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>ham</td>
+      <td>Ill be there on  &amp;lt;#&amp;gt;  ok.</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</div>
+<div class="section" id="clean-the-dataset">
+<h2>Clean the dataset<a class="headerlink" href="#clean-the-dataset" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># remove punctuation</span>
+<span class="n">train</span><span class="p">[</span><span class="s1">&#39;SMS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">train</span><span class="p">[</span><span class="s1">&#39;SMS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;\W&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="n">train</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Label</th>
+      <th>SMS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>ham</td>
+      <td>Yep  by the pretty sculpture</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>ham</td>
+      <td>Yes  princess  Are you going to make me moan</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>ham</td>
+      <td>Welp apparently he retired</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>ham</td>
+      <td>Havent</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>ham</td>
+      <td>I forgot 2 ask ü all smth   There s a card on ...</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>ham</td>
+      <td>Ok i thk i got it  Then u wan me 2 come now or...</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>ham</td>
+      <td>I want kfc its Tuesday  Only buy 2 meals ONLY ...</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>ham</td>
+      <td>No dear i was sleeping   P</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>ham</td>
+      <td>Ok pa  Nothing problem</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>ham</td>
+      <td>Ill be there on   lt   gt   ok</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Transform every letter in every word to lowercase</span>
+<span class="n">train</span><span class="p">[</span><span class="s1">&#39;SMS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">train</span><span class="p">[</span><span class="s1">&#39;SMS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<span class="n">train</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Label</th>
+      <th>SMS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>ham</td>
+      <td>yep  by the pretty sculpture</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>ham</td>
+      <td>yes  princess  are you going to make me moan</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>ham</td>
+      <td>welp apparently he retired</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>ham</td>
+      <td>havent</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>ham</td>
+      <td>i forgot 2 ask ü all smth   there s a card on ...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a vocabulary for the messages in the training set.</span>
+<span class="c1"># The vocabulary should be a Python list containing all the unique words across all messages, </span>
+<span class="c1"># where each word is represented as a string.</span>
+
+<span class="c1"># Create a list of words</span>
+<span class="n">train</span><span class="p">[</span><span class="s1">&#39;SMS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">train</span><span class="p">[</span><span class="s1">&#39;SMS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+<span class="n">vocabulary</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">train</span><span class="p">[</span><span class="s1">&#39;SMS&#39;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+        <span class="n">vocabulary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+<span class="n">vocabulary</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">))</span>
+<span class="n">vocabulary</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;alright&#39;,
+ &#39;pesky&#39;,
+ &#39;yelow&#39;,
+ &#39;cutie&#39;,
+ &#39;mistake&#39;,
+ &#39;defeat&#39;,
+ &#39;video&#39;,
+ &#39;grow&#39;,
+ &#39;hallaq&#39;,
+ &#39;avenge&#39;,
+ &#39;watts&#39;,
+ &#39;liao&#39;,
+ &#39;62468&#39;,
+ &#39;general&#39;,
+ &#39;3030&#39;,
+ &#39;ym&#39;,
+ &#39;winds&#39;,
+ &#39;alert&#39;,
+ &#39;08717509990&#39;,
+ &#39;aries&#39;,
+ &#39;smear&#39;,
+ &#39;apologize&#39;,
+ &#39;solve&#39;,
+ &#39;blah&#39;,
+ &#39;lacs&#39;,
+ &#39;vilikkam&#39;,
+ &#39;87131&#39;,
+ &#39;downloaded&#39;,
+ &#39;jada&#39;,
+ &#39;textbook&#39;,
+ &#39;g&#39;,
+ &#39;pocay&#39;,
+ &#39;kz&#39;,
+ &#39;swoop&#39;,
+ &#39;ft&#39;,
+ &#39;flirt&#39;,
+ &#39;foregate&#39;,
+ &#39;shld&#39;,
+ &#39;0871212025016&#39;,
+ &#39;xchat&#39;,
+ &#39;illspeak&#39;,
+ &#39;pixels&#39;,
+ &#39;baig&#39;,
+ &#39;946&#39;,
+ &#39;2i&#39;,
+ &#39;cheyyamo&#39;,
+ &#39;max6&#39;,
+ &#39;getstop&#39;,
+ &#39;buyer&#39;,
+ &#39;freedom&#39;,
+ &#39;afew&#39;,
+ &#39;sagamu&#39;,
+ &#39;soiree&#39;,
+ &#39;mini&#39;,
+ &#39;09066364349&#39;,
+ &#39;rdy&#39;,
+ &#39;09066649731from&#39;,
+ &#39;thia&#39;,
+ &#39;thread&#39;,
+ &#39;soil&#39;,
+ &#39;tomo&#39;,
+ &#39;tonexs&#39;,
+ &#39;apart&#39;,
+ &#39;helens&#39;,
+ &#39;ask&#39;,
+ &#39;gdeve&#39;,
+ &#39;favorite&#39;,
+ &#39;predictive&#39;,
+ &#39;credit&#39;,
+ &#39;pax&#39;,
+ &#39;sura&#39;,
+ &#39;glorious&#39;,
+ &#39;worthless&#39;,
+ &#39;mtmsg&#39;,
+ &#39;tsandcs&#39;,
+ &#39;answr&#39;,
+ &#39;whore&#39;,
+ &#39;carolina&#39;,
+ &#39;no&#39;,
+ &#39;scenery&#39;,
+ &#39;1million&#39;,
+ &#39;waht&#39;,
+ &#39;adam&#39;,
+ &#39;suntec&#39;,
+ &#39;alrite&#39;,
+ &#39;axis&#39;,
+ &#39;haiz&#39;,
+ &#39;disconnect&#39;,
+ &#39;supreme&#39;,
+ &#39;messaging&#39;,
+ &#39;hours&#39;,
+ &#39;hot&#39;,
+ &#39;ccna&#39;,
+ &#39;sweetie&#39;,
+ &#39;tht&#39;,
+ &#39;fb&#39;,
+ &#39;oclock&#39;,
+ &#39;espe&#39;,
+ &#39;detroit&#39;,
+ &#39;commit&#39;,
+ &#39;pints&#39;,
+ &#39;mood&#39;,
+ &#39;night&#39;,
+ &#39;baby&#39;,
+ &#39;approve&#39;,
+ &#39;paid&#39;,
+ &#39;tablet&#39;,
+ &#39;evening&#39;,
+ &#39;calm&#39;,
+ &#39;offc&#39;,
+ &#39;dificult&#39;,
+ &#39;0578&#39;,
+ &#39;outsomewhere&#39;,
+ &#39;play&#39;,
+ &#39;acl03530150pm&#39;,
+ &#39;videosounds&#39;,
+ &#39;menu&#39;,
+ &#39;mix&#39;,
+ &#39;coco&#39;,
+ &#39;janinexx&#39;,
+ &#39;concentrating&#39;,
+ &#39;gent&#39;,
+ &#39;surf&#39;,
+ &#39;flyng&#39;,
+ &#39;nuerologist&#39;,
+ &#39;sang&#39;,
+ &#39;atrocious&#39;,
+ &#39;die&#39;,
+ &#39;u&#39;,
+ &#39;success&#39;,
+ &#39;dead&#39;,
+ &#39;parade&#39;,
+ &#39;freak&#39;,
+ &#39;yo&#39;,
+ &#39;specs&#39;,
+ &#39;imposter&#39;,
+ &#39;nike&#39;,
+ &#39;jay&#39;,
+ &#39;buying&#39;,
+ &#39;steed&#39;,
+ &#39;traveling&#39;,
+ &#39;display&#39;,
+ &#39;n8&#39;,
+ &#39;ringing&#39;,
+ &#39;audiitions&#39;,
+ &#39;disasters&#39;,
+ &#39;imagination&#39;,
+ &#39;v&#39;,
+ &#39;rolled&#39;,
+ &#39;truro&#39;,
+ &#39;decimal&#39;,
+ &#39;standing&#39;,
+ &#39;9280114&#39;,
+ &#39;begin&#39;,
+ &#39;group&#39;,
+ &#39;ything&#39;,
+ &#39;2nd&#39;,
+ &#39;speed&#39;,
+ &#39;bam&#39;,
+ &#39;broadband&#39;,
+ &#39;allowed&#39;,
+ &#39;cheating&#39;,
+ &#39;yetty&#39;,
+ &#39;4years&#39;,
+ &#39;nri&#39;,
+ &#39;prsn&#39;,
+ &#39;trip&#39;,
+ &#39;m221bp&#39;,
+ &#39;woohoo&#39;,
+ &#39;smiles&#39;,
+ &#39;language&#39;,
+ &#39;hopeu&#39;,
+ &#39;predicte&#39;,
+ &#39;newest&#39;,
+ &#39;physics&#39;,
+ &#39;pay&#39;,
+ &#39;srs&#39;,
+ &#39;rebooting&#39;,
+ &#39;310303&#39;,
+ &#39;chikku&#39;,
+ &#39;renewal&#39;,
+ &#39;flaked&#39;,
+ &#39;wrongly&#39;,
+ &#39;eyes&#39;,
+ &#39;loads&#39;,
+ &#39;computerless&#39;,
+ &#39;bears&#39;,
+ &#39;hate&#39;,
+ &#39;nobody&#39;,
+ &#39;cnn&#39;,
+ &#39;skye&#39;,
+ &#39;goodo&#39;,
+ &#39;earning&#39;,
+ &#39;4wrd&#39;,
+ &#39;channel&#39;,
+ &#39;paper&#39;,
+ &#39;definite&#39;,
+ &#39;suggestions&#39;,
+ &#39;situation&#39;,
+ &#39;sofa&#39;,
+ &#39;mt&#39;,
+ &#39;juz&#39;,
+ &#39;a30&#39;,
+ &#39;prefer&#39;,
+ &#39;kay&#39;,
+ &#39;yogasana&#39;,
+ &#39;maretare&#39;,
+ &#39;wet&#39;,
+ &#39;personal&#39;,
+ &#39;loyalty&#39;,
+ &#39;wkly&#39;,
+ &#39;69888&#39;,
+ &#39;nigro&#39;,
+ &#39;24&#39;,
+ &#39;has&#39;,
+ &#39;lst&#39;,
+ &#39;esplanade&#39;,
+ &#39;09050000460&#39;,
+ &#39;asking&#39;,
+ &#39;tops&#39;,
+ &#39;company&#39;,
+ &#39;07xxxxxxxxx&#39;,
+ &#39;spelled&#39;,
+ &#39;marry&#39;,
+ &#39;subscriber&#39;,
+ &#39;sar&#39;,
+ &#39;freek&#39;,
+ &#39;smsservices&#39;,
+ &#39;hu&#39;,
+ &#39;mostly&#39;,
+ &#39;bec&#39;,
+ &#39;yer&#39;,
+ &#39;strongly&#39;,
+ &#39;genus&#39;,
+ &#39;crucial&#39;,
+ &#39;wishes&#39;,
+ &#39;check&#39;,
+ &#39;930&#39;,
+ &#39;8&#39;,
+ &#39;abj&#39;,
+ &#39;throw&#39;,
+ &#39;rushing&#39;,
+ &#39;220&#39;,
+ &#39;singing&#39;,
+ &#39;norcorp&#39;,
+ &#39;lovely&#39;,
+ &#39;filthy&#39;,
+ &#39;box1146&#39;,
+ &#39;arm&#39;,
+ &#39;ovulation&#39;,
+ &#39;bristol&#39;,
+ &#39;directly&#39;,
+ &#39;justthought&#39;,
+ &#39;payback&#39;,
+ &#39;roles&#39;,
+ &#39;savings&#39;,
+ &#39;lac&#39;,
+ &#39;got&#39;,
+ &#39;breakfast&#39;,
+ &#39;pdate_now&#39;,
+ &#39;140&#39;,
+ &#39;tampa&#39;,
+ &#39;log&#39;,
+ &#39;loans&#39;,
+ &#39;raining&#39;,
+ &#39;lucyxx&#39;,
+ &#39;sudden&#39;,
+ &#39;greatest&#39;,
+ &#39;window&#39;,
+ &#39;08718726270&#39;,
+ &#39;vat&#39;,
+ &#39;absolutely&#39;,
+ &#39;parents&#39;,
+ &#39;rain&#39;,
+ &#39;breathe1&#39;,
+ &#39;gn&#39;,
+ &#39;idiot&#39;,
+ &#39;reference&#39;,
+ &#39;oranges&#39;,
+ &#39;jas&#39;,
+ &#39;silence&#39;,
+ &#39;402&#39;,
+ &#39;taught&#39;,
+ &#39;b4u&#39;,
+ &#39;otside&#39;,
+ &#39;meaningful&#39;,
+ &#39;ext&#39;,
+ &#39;champ&#39;,
+ &#39;petticoatdreams&#39;,
+ &#39;crckt&#39;,
+ &#39;pert&#39;,
+ &#39;ertini&#39;,
+ &#39;087187262701&#39;,
+ &#39;range&#39;,
+ &#39;shite&#39;,
+ &#39;realised&#39;,
+ &#39;worlds&#39;,
+ &#39;wrks&#39;,
+ &#39;parked&#39;,
+ &#39;fgkslpopw&#39;,
+ &#39;m26&#39;,
+ &#39;dictionary&#39;,
+ &#39;macha&#39;,
+ &#39;raksha&#39;,
+ &#39;suddenly&#39;,
+ &#39;00&#39;,
+ &#39;action&#39;,
+ &#39;route&#39;,
+ &#39;groovying&#39;,
+ &#39;step&#39;,
+ &#39;facilities&#39;,
+ &#39;ru&#39;,
+ &#39;innings&#39;,
+ &#39;length&#39;,
+ &#39;laundry&#39;,
+ &#39;competition&#39;,
+ &#39;sum&#39;,
+ &#39;unmits&#39;,
+ &#39;bsn&#39;,
+ &#39;wants&#39;,
+ &#39;lays&#39;,
+ &#39;h&#39;,
+ &#39;84025&#39;,
+ &#39;10k&#39;,
+ &#39;ammae&#39;,
+ &#39;sinco&#39;,
+ &#39;tomeandsaid&#39;,
+ &#39;teaches&#39;,
+ &#39;8lb&#39;,
+ &#39;hearing&#39;,
+ &#39;dang&#39;,
+ &#39;mobs&#39;,
+ &#39;hut&#39;,
+ &#39;fulfil&#39;,
+ &#39;blame&#39;,
+ &#39;unhappy&#39;,
+ &#39;http&#39;,
+ &#39;sale&#39;,
+ &#39;anyway&#39;,
+ &#39;evenings&#39;,
+ &#39;different&#39;,
+ &#39;however&#39;,
+ &#39;upset&#39;,
+ &#39;09063458130&#39;,
+ &#39;smile&#39;,
+ &#39;various&#39;,
+ &#39;cam&#39;,
+ &#39;gek1510&#39;,
+ &#39;operator&#39;,
+ &#39;victors&#39;,
+ &#39;dr&#39;,
+ &#39;walmart&#39;,
+ &#39;rp176781&#39;,
+ &#39;meow&#39;,
+ &#39;forward&#39;,
+ &#39;useful&#39;,
+ &#39;0871277810810&#39;,
+ &#39;scorable&#39;,
+ &#39;shsex&#39;,
+ &#39;nowadays&#39;,
+ &#39;needing&#39;,
+ &#39;style&#39;,
+ &#39;prizeawaiting&#39;,
+ &#39;aslamalaikkum&#39;,
+ &#39;xxxxxxxx&#39;,
+ &#39;frndship&#39;,
+ &#39;property&#39;,
+ &#39;scool&#39;,
+ &#39;chatter&#39;,
+ &#39;4fil&#39;,
+ &#39;discuss&#39;,
+ &#39;helps&#39;,
+ &#39;07880867867&#39;,
+ &#39;investigate&#39;,
+ &#39;idk&#39;,
+ &#39;35p&#39;,
+ &#39;jones&#39;,
+ &#39;handset&#39;,
+ &#39;prospects&#39;,
+ &#39;breaking&#39;,
+ &#39;kidz&#39;,
+ &#39;sarcasm&#39;,
+ &#39;community&#39;,
+ &#39;bao&#39;,
+ &#39;pg&#39;,
+ &#39;visitors&#39;,
+ &#39;waited&#39;,
+ &#39;yay&#39;,
+ &#39;declare&#39;,
+ &#39;rumour&#39;,
+ &#39;conducts&#39;,
+ &#39;1x150p&#39;,
+ &#39;record&#39;,
+ &#39;headache&#39;,
+ &#39;birthdate&#39;,
+ &#39;rec&#39;,
+ &#39;allalo&#39;,
+ &#39;antha&#39;,
+ &#39;fassyole&#39;,
+ &#39;7&#39;,
+ &#39;69696&#39;,
+ &#39;scarcasim&#39;,
+ &#39;call&#39;,
+ &#39;ericsson&#39;,
+ &#39;630&#39;,
+ &#39;call09050000327&#39;,
+ &#39;fact&#39;,
+ &#39;occupied&#39;,
+ &#39;url&#39;,
+ &#39;took&#39;,
+ &#39;nytho&#39;,
+ &#39;box334sk38ch&#39;,
+ &#39;bellearlier&#39;,
+ &#39;forever&#39;,
+ &#39;puttin&#39;,
+ &#39;dhoni&#39;,
+ &#39;swtheart&#39;,
+ &#39;dats&#39;,
+ &#39;prin&#39;,
+ &#39;lists&#39;,
+ &#39;sooner&#39;,
+ &#39;mens&#39;,
+ &#39;eshxxxxxxxxxxx&#39;,
+ &#39;discreet&#39;,
+ &#39;squid&#39;,
+ &#39;smiley&#39;,
+ &#39;08718730666&#39;,
+ &#39;chatting&#39;,
+ &#39;mall&#39;,
+ &#39;avent&#39;,
+ &#39;dodda&#39;,
+ &#39;ml&#39;,
+ &#39;oble&#39;,
+ &#39;priscilla&#39;,
+ &#39;woken&#39;,
+ &#39;lk&#39;,
+ &#39;elaya&#39;,
+ &#39;les&#39;,
+ &#39;siguviri&#39;,
+ &#39;pours&#39;,
+ &#39;windows&#39;,
+ &#39;glo&#39;,
+ &#39;noice&#39;,
+ &#39;80878&#39;,
+ &#39;vargu&#39;,
+ &#39;fone&#39;,
+ &#39;possessive&#39;,
+ &#39;seven&#39;,
+ &#39;walks&#39;,
+ &#39;hmmm&#39;,
+ &#39;active&#39;,
+ &#39;adventuring&#39;,
+ &#39;cumin&#39;,
+ &#39;sux&#39;,
+ &#39;relationship&#39;,
+ &#39;0089&#39;,
+ &#39;website&#39;,
+ &#39;anythingtomorrow&#39;,
+ &#39;trying&#39;,
+ &#39;waking&#39;,
+ &#39;machan&#39;,
+ &#39;gaytextbuddy&#39;,
+ &#39;cereals&#39;,
+ &#39;congratulations&#39;,
+ &#39;sorts&#39;,
+ &#39;things&#39;,
+ &#39;amrita&#39;,
+ &#39;talent&#39;,
+ &#39;comp&#39;,
+ &#39;hows&#39;,
+ &#39;rtf&#39;,
+ &#39;jackson&#39;,
+ &#39;80&#39;,
+ &#39;petey&#39;,
+ &#39;carryin&#39;,
+ &#39;correction&#39;,
+ &#39;child&#39;,
+ &#39;tuesday&#39;,
+ &#39;nyc&#39;,
+ &#39;cleared&#39;,
+ &#39;units&#39;,
+ &#39;bffs&#39;,
+ &#39;600&#39;,
+ &#39;brothers&#39;,
+ &#39;sneham&#39;,
+ &#39;nitros&#39;,
+ &#39;xin&#39;,
+ &#39;8pm&#39;,
+ &#39;meat&#39;,
+ &#39;shot&#39;,
+ &#39;useless&#39;,
+ &#39;ystrday&#39;,
+ &#39;insects&#39;,
+ &#39;fill&#39;,
+ &#39;kissing&#39;,
+ &#39;influx&#39;,
+ &#39;tms&#39;,
+ &#39;banned&#39;,
+ &#39;evrydy&#39;,
+ &#39;thirunelvali&#39;,
+ &#39;flies&#39;,
+ &#39;missin&#39;,
+ &#39;uk&#39;,
+ &#39;images&#39;,
+ &#39;fair&#39;,
+ &#39;wisheds&#39;,
+ &#39;fwiw&#39;,
+ &#39;unnecessarily&#39;,
+ &#39;tightly&#39;,
+ &#39;9755&#39;,
+ &#39;woot&#39;,
+ &#39;onum&#39;,
+ &#39;there&#39;,
+ &#39;smokes&#39;,
+ &#39;dialling&#39;,
+ &#39;hanging&#39;,
+ &#39;ringtones&#39;,
+ &#39;misundrstud&#39;,
+ &#39;clocks&#39;,
+ &#39;rupaul&#39;,
+ &#39;list&#39;,
+ &#39;yourself&#39;,
+ &#39;sarasota&#39;,
+ &#39;4got&#39;,
+ &#39;bone&#39;,
+ &#39;wasted&#39;,
+ &#39;pink&#39;,
+ &#39;pic&#39;,
+ &#39;deleted&#39;,
+ &#39;cw25wx&#39;,
+ &#39;looks&#39;,
+ &#39;kb&#39;,
+ &#39;bevies&#39;,
+ &#39;thedailydraw&#39;,
+ &#39;177&#39;,
+ &#39;sentence&#39;,
+ &#39;750&#39;,
+ &#39;09066364311&#39;,
+ &#39;wating&#39;,
+ &#39;calculation&#39;,
+ &#39;speak&#39;,
+ &#39;archive&#39;,
+ &#39;colin&#39;,
+ &#39;swan&#39;,
+ &#39;bc&#39;,
+ &#39;stable&#39;,
+ &#39;imagine&#39;,
+ &#39;callcost150ppmmobilesvary&#39;,
+ &#39;stunning&#39;,
+ &#39;spun&#39;,
+ &#39;treacle&#39;,
+ &#39;avatar&#39;,
+ &#39;87077&#39;,
+ &#39;heard&#39;,
+ &#39;200p&#39;,
+ &#39;insurance&#39;,
+ &#39;basket&#39;,
+ &#39;uawake&#39;,
+ &#39;wins&#39;,
+ &#39;robs&#39;,
+ &#39;fish&#39;,
+ &#39;dancing&#39;,
+ &#39;twenty&#39;,
+ &#39;cro1327&#39;,
+ &#39;weiyi&#39;,
+ &#39;nigh&#39;,
+ &#39;humans&#39;,
+ &#39;bollox&#39;,
+ &#39;449071512431&#39;,
+ &#39;sore&#39;,
+ &#39;messy&#39;,
+ &#39;comfey&#39;,
+ &#39;marrge&#39;,
+ &#39;total&#39;,
+ &#39;capacity&#39;,
+ &#39;probs&#39;,
+ &#39;posted&#39;,
+ &#39;mob&#39;,
+ &#39;past&#39;,
+ &#39;upgrade&#39;,
+ &#39;havnt&#39;,
+ &#39;89938&#39;,
+ &#39;does&#39;,
+ &#39;pride&#39;,
+ &#39;film&#39;,
+ &#39;writhing&#39;,
+ &#39;drpd&#39;,
+ &#39;3rd&#39;,
+ &#39;colleagues&#39;,
+ &#39;dao&#39;,
+ &#39;sipix&#39;,
+ &#39;lv&#39;,
+ &#39;role&#39;,
+ &#39;shipping&#39;,
+ &#39;holby&#39;,
+ &#39;jan&#39;,
+ &#39;orange&#39;,
+ &#39;considering&#39;,
+ &#39;4403ldnw1a7rw18&#39;,
+ &#39;residency&#39;,
+ &#39;sony&#39;,
+ &#39;starve&#39;,
+ &#39;turn&#39;,
+ &#39;tke&#39;,
+ &#39;2mro&#39;,
+ &#39;till&#39;,
+ &#39;seing&#39;,
+ &#39;doll&#39;,
+ &#39;tactless&#39;,
+ &#39;land&#39;,
+ &#39;town&#39;,
+ &#39;kusruthi&#39;,
+ &#39;walsall&#39;,
+ &#39;srsly&#39;,
+ &#39;occurs&#39;,
+ &#39;waheed&#39;,
+ &#39;pretty&#39;,
+ &#39;comes&#39;,
+ &#39;scallies&#39;,
+ &#39;bbq&#39;,
+ &#39;sleep&#39;,
+ &#39;satisfy&#39;,
+ &#39;butting&#39;,
+ &#39;dancin&#39;,
+ &#39;09058091854&#39;,
+ &#39;death&#39;,
+ &#39;sun0819&#39;,
+ &#39;costume&#39;,
+ &#39;avin&#39;,
+ &#39;woould&#39;,
+ &#39;afghanistan&#39;,
+ &#39;js&#39;,
+ &#39;sehwag&#39;,
+ &#39;because&#39;,
+ &#39;home&#39;,
+ &#39;07786200117&#39;,
+ &#39;drugs&#39;,
+ &#39;data&#39;,
+ &#39;tron&#39;,
+ &#39;kip&#39;,
+ &#39;abel&#39;,
+ &#39;rounder&#39;,
+ &#39;easy&#39;,
+ &#39;map&#39;,
+ &#39;companion&#39;,
+ &#39;goodmorning&#39;,
+ &#39;upto&#39;,
+ &#39;mapquest&#39;,
+ &#39;sentiment&#39;,
+ &#39;melt&#39;,
+ &#39;hurts&#39;,
+ &#39;sachin&#39;,
+ &#39;endowed&#39;,
+ &#39;sucks&#39;,
+ &#39;wit&#39;,
+ &#39;really&#39;,
+ &#39;hopes&#39;,
+ &#39;milk&#39;,
+ &#39;bsnl&#39;,
+ &#39;reflection&#39;,
+ &#39;checking&#39;,
+ &#39;us&#39;,
+ &#39;christmas&#39;,
+ &#39;shaking&#39;,
+ &#39;thot&#39;,
+ &#39;pokkiri&#39;,
+ &#39;180&#39;,
+ &#39;toyota&#39;,
+ &#39;confirmd&#39;,
+ &#39;position&#39;,
+ &#39;kano&#39;,
+ &#39;flavour&#39;,
+ &#39;school&#39;,
+ &#39;da&#39;,
+ &#39;dislikes&#39;,
+ &#39;raji&#39;,
+ &#39;smash&#39;,
+ &#39;abbey&#39;,
+ &#39;bleak&#39;,
+ &#39;havent&#39;,
+ &#39;phrase&#39;,
+ &#39;brainy&#39;,
+ &#39;09050002311&#39;,
+ &#39;upon&#39;,
+ &#39;yan&#39;,
+ &#39;50award&#39;,
+ &#39;wo&#39;,
+ &#39;stores&#39;,
+ &#39;losing&#39;,
+ &#39;beneath&#39;,
+ &#39;walkin&#39;,
+ &#39;ship&#39;,
+ &#39;whom&#39;,
+ &#39;meal&#39;,
+ &#39;le&#39;,
+ &#39;duvet&#39;,
+ &#39;945&#39;,
+ &#39;olayiwola&#39;,
+ &#39;wocay&#39;,
+ &#39;15pm&#39;,
+ &#39;sos&#39;,
+ &#39;receiving&#39;,
+ &#39;wml&#39;,
+ &#39;closes&#39;,
+ &#39;the&#39;,
+ &#39;mwahs&#39;,
+ &#39;dating&#39;,
+ &#39;chapter&#39;,
+ &#39;grins&#39;,
+ &#39;sac&#39;,
+ &#39;hesitate&#39;,
+ &#39;ji&#39;,
+ &#39;cast&#39;,
+ &#39;mail&#39;,
+ &#39;eight&#39;,
+ &#39;sense&#39;,
+ &#39;bfore&#39;,
+ &#39;mahaveer&#39;,
+ &#39;more&#39;,
+ &#39;lap&#39;,
+ &#39;slurp&#39;,
+ &#39;hillsborough&#39;,
+ &#39;23f&#39;,
+ &#39;woodland&#39;,
+ &#39;surgical&#39;,
+ &#39;oli&#39;,
+ &#39;snot&#39;,
+ &#39;rg21&#39;,
+ &#39;9t&#39;,
+ &#39;mmmmmmm&#39;,
+ &#39;within&#39;,
+ &#39;texas&#39;,
+ &#39;timings&#39;,
+ &#39;relatives&#39;,
+ &#39;couple&#39;,
+ &#39;bless&#39;,
+ &#39;such&#39;,
+ &#39;spent&#39;,
+ &#39;speciale&#39;,
+ &#39;batch&#39;,
+ &#39;margin&#39;,
+ &#39;tmorrow&#39;,
+ &#39;back&#39;,
+ &#39;dance&#39;,
+ &#39;access&#39;,
+ &#39;ileave&#39;,
+ &#39;mornin&#39;,
+ &#39;be&#39;,
+ &#39;during&#39;,
+ &#39;work&#39;,
+ &#39;89693&#39;,
+ &#39;steps&#39;,
+ &#39;andrews&#39;,
+ &#39;decision&#39;,
+ &#39;2optout&#39;,
+ &#39;promises&#39;,
+ &#39;brisk&#39;,
+ &#39;promotion&#39;,
+ &#39;culdnt&#39;,
+ &#39;flying&#39;,
+ &#39;roller&#39;,
+ &#39;hvae&#39;,
+ &#39;expires&#39;,
+ &#39;gd&#39;,
+ &#39;surprised&#39;,
+ &#39;chad&#39;,
+ &#39;75max&#39;,
+ &#39;degree&#39;,
+ &#39;oil&#39;,
+ &#39;cnl&#39;,
+ &#39;memory&#39;,
+ &#39;keen&#39;,
+ &#39;belive&#39;,
+ &#39;erode&#39;,
+ &#39;sankatmochan&#39;,
+ &#39;ffectionate&#39;,
+ &#39;yourjob&#39;,
+ &#39;ignoring&#39;,
+ &#39;plz&#39;,
+ &#39;marriage&#39;,
+ &#39;lifpartnr&#39;,
+ &#39;09061743386&#39;,
+ &#39;telephone&#39;,
+ &#39;inclusive&#39;,
+ &#39;das&#39;,
+ &#39;resort&#39;,
+ &#39;souveniers&#39;,
+ &#39;headset&#39;,
+ &#39;terrorist&#39;,
+ &#39;prepare&#39;,
+ &#39;jokin&#39;,
+ &#39;wen&#39;,
+ &#39;blessing&#39;,
+ &#39;ghost&#39;,
+ &#39;hold&#39;,
+ &#39;dentists&#39;,
+ &#39;desparate&#39;,
+ &#39;wanna&#39;,
+ &#39;engagement&#39;,
+ &#39;pix&#39;,
+ &#39;lips&#39;,
+ &#39;ugh&#39;,
+ &#39;fren&#39;,
+ &#39;aunts&#39;,
+ &#39;toughest&#39;,
+ &#39;itz&#39;,
+ &#39;stories&#39;,
+ &#39;onbus&#39;,
+ &#39;parties&#39;,
+ &#39;butt&#39;,
+ &#39;tsunamis&#39;,
+ &#39;uploaded&#39;,
+ &#39;noooooooo&#39;,
+ &#39;others&#39;,
+ &#39;sex&#39;,
+ &#39;wats&#39;,
+ &#39;biggest&#39;,
+ &#39;teacher&#39;,
+ &#39;hotels&#39;,
+ &#39;wil&#39;,
+ &#39;sh&#39;,
+ &#39;unconsciously&#39;,
+ &#39;chase&#39;,
+ &#39;glad&#39;,
+ &#39;7cfca1a&#39;,
+ &#39;1146&#39;,
+ &#39;would&#39;,
+ &#39;atural&#39;,
+ &#39;posible&#39;,
+ &#39;workand&#39;,
+ &#39;messenger&#39;,
+ &#39;yours&#39;,
+ &#39;centre&#39;,
+ &#39;gone&#39;,
+ &#39;careers&#39;,
+ &#39;stomach&#39;,
+ &#39;await&#39;,
+ &#39;makin&#39;,
+ &#39;snuggles&#39;,
+ &#39;nurses&#39;,
+ &#39;sunlight&#39;,
+ &#39;cakes&#39;,
+ &#39;youphone&#39;,
+ &#39;keeping&#39;,
+ &#39;rencontre&#39;,
+ &#39;150p16&#39;,
+ &#39;leh&#39;,
+ &#39;07801543489&#39;,
+ &#39;screaming&#39;,
+ &#39;paypal&#39;,
+ &#39;0207&#39;,
+ &#39;sn&#39;,
+ &#39;dai&#39;,
+ &#39;kindly&#39;,
+ &#39;womdarfull&#39;,
+ &#39;activities&#39;,
+ &#39;ache&#39;,
+ &#39;skins&#39;,
+ &#39;jewelry&#39;,
+ &#39;sday&#39;,
+ &#39;tnc&#39;,
+ &#39;merememberin&#39;,
+ &#39;mummy&#39;,
+ &#39;january&#39;,
+ &#39;jiu&#39;,
+ &#39;elsewhere&#39;,
+ &#39;alerts&#39;,
+ &#39;shining&#39;,
+ &#39;img&#39;,
+ &#39;150pm&#39;,
+ &#39;swatch&#39;,
+ &#39;inlude&#39;,
+ &#39;forwarding&#39;,
+ &#39;bites&#39;,
+ &#39;listening&#39;,
+ &#39;wah&#39;,
+ &#39;market&#39;,
+ &#39;poured&#39;,
+ &#39;specialisation&#39;,
+ &#39;087123002209am&#39;,
+ &#39;poboxox36504w45wq&#39;,
+ &#39;whn&#39;,
+ &#39;aids&#39;,
+ &#39;sighs&#39;,
+ &#39;mid&#39;,
+ &#39;sharing&#39;,
+ &#39;loved&#39;,
+ &#39;appt&#39;,
+ &#39;sudn&#39;,
+ &#39;4041&#39;,
+ &#39;suganya&#39;,
+ &#39;scenario&#39;,
+ &#39;bar&#39;,
+ &#39;joys&#39;,
+ &#39;gosh&#39;,
+ &#39;shirts&#39;,
+ &#39;jess&#39;,
+ &#39;kingdom&#39;,
+ &#39;09066361921&#39;,
+ &#39;error&#39;,
+ &#39;40&#39;,
+ &#39;affection&#39;,
+ &#39;photos&#39;,
+ &#39;into&#39;,
+ &#39;psychiatrist&#39;,
+ &#39;cusoon&#39;,
+ &#39;certificate&#39;,
+ &#39;kidding&#39;,
+ &#39;tone&#39;,
+ &#39;bathing&#39;,
+ &#39;4my&#39;,
+ &#39;fancies&#39;,
+ &#39;scammers&#39;,
+ &#39;shah&#39;,
+ &#39;salad&#39;,
+ &#39;pthis&#39;,
+ &#39;lovin&#39;,
+ &#39;bk&#39;,
+ &#39;fav&#39;,
+ &#39;page&#39;,
+ &#39;contains&#39;,
+ &#39;experiment&#39;,
+ &#39;lighters&#39;,
+ &#39;woulda&#39;,
+ &#39;replied&#39;,
+ &#39;exact&#39;,
+ &#39;weather&#39;,
+ &#39;sunscreen&#39;,
+ &#39;50p&#39;,
+ &#39;vaazhthukkal&#39;,
+ &#39;sis&#39;,
+ &#39;shakespeare&#39;,
+ &#39;ey&#39;,
+ &#39;changing&#39;,
+ &#39;happening&#39;,
+ &#39;ruthful&#39;,
+ &#39;cann&#39;,
+ &#39;sometext&#39;,
+ &#39;wylie&#39;,
+ &#39;09050280520&#39;,
+ &#39;billing&#39;,
+ &#39;anniversary&#39;,
+ &#39;08001950382&#39;,
+ &#39;chicken&#39;,
+ &#39;local&#39;,
+ &#39;brain&#39;,
+ &#39;finally&#39;,
+ &#39;fab&#39;,
+ &#39;eachother&#39;,
+ &#39;cards&#39;,
+ &#39;slots&#39;,
+ &#39;everybody&#39;,
+ &#39;snappy&#39;,
+ &#39;iriver&#39;,
+ &#39;that2worzels&#39;,
+ &#39;discussed&#39;,
+ &#39;guai&#39;,
+ &#39;pockets&#39;,
+ &#39;shudvetold&#39;,
+ &#39;sugababes&#39;,
+ &#39;studying&#39;,
+ &#39;box39822&#39;,
+ &#39;curious&#39;,
+ &#39;reserved&#39;,
+ &#39;snogs&#39;,
+ &#39;submitting&#39;,
+ &#39;problem&#39;,
+ &#39;careabout&#39;,
+ &#39;w1j6hl&#39;,
+ &#39;halla&#39;,
+ &#39;excuse&#39;,
+ &#39;tonght&#39;,
+ &#39;make&#39;,
+ &#39;lounge&#39;,
+ &#39;regretted&#39;,
+ &#39;reminded&#39;,
+ &#39;mileage&#39;,
+ &#39;mila&#39;,
+ &#39;travel&#39;,
+ &#39;2ez&#39;,
+ &#39;falconerf&#39;,
+ &#39;whose&#39;,
+ &#39;t&#39;,
+ &#39;tahan&#39;,
+ &#39;breathe&#39;,
+ &#39;inclu&#39;,
+ &#39;shexy&#39;,
+ &#39;coccooning&#39;,
+ &#39;bid&#39;,
+ &#39;mys&#39;,
+ &#39;4info&#39;,
+ &#39;season&#39;,
+ &#39;08000938767&#39;,
+ &#39;2waxsto&#39;,
+ &#39;82277&#39;,
+ &#39;sickness&#39;,
+ &#39;barred&#39;,
+ &#39;sliding&#39;,
+ &#39;uworld&#39;,
+ &#39;lotsly&#39;,
+ ...]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create dictionary with number of words in every SMS</span>
+<span class="n">word_counts_per_sms</span> <span class="o">=</span> <span class="p">{</span><span class="n">unique_word</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="s1">&#39;SMS&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">unique_word</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="p">}</span>
+
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">sms</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="s1">&#39;SMS&#39;</span><span class="p">]):</span>
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">sms</span><span class="p">:</span>
+        <span class="n">word_counts_per_sms</span><span class="p">[</span><span class="n">word</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">word_counts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">word_counts_per_sms</span><span class="p">)</span>
+<span class="n">word_counts</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>alright</th>
+      <th>pesky</th>
+      <th>yelow</th>
+      <th>cutie</th>
+      <th>mistake</th>
+      <th>defeat</th>
+      <th>video</th>
+      <th>grow</th>
+      <th>hallaq</th>
+      <th>avenge</th>
+      <th>...</th>
+      <th>macho</th>
+      <th>morn</th>
+      <th>sea</th>
+      <th>mitsake</th>
+      <th>completed</th>
+      <th>0</th>
+      <th>molested</th>
+      <th>stuffed</th>
+      <th>showing</th>
+      <th>adventure</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 7783 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">training_set_clean</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">train</span><span class="p">,</span> <span class="n">word_counts</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">training_set_clean</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Label</th>
+      <th>SMS</th>
+      <th>alright</th>
+      <th>pesky</th>
+      <th>yelow</th>
+      <th>cutie</th>
+      <th>mistake</th>
+      <th>defeat</th>
+      <th>video</th>
+      <th>grow</th>
+      <th>...</th>
+      <th>macho</th>
+      <th>morn</th>
+      <th>sea</th>
+      <th>mitsake</th>
+      <th>completed</th>
+      <th>0</th>
+      <th>molested</th>
+      <th>stuffed</th>
+      <th>showing</th>
+      <th>adventure</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>ham</td>
+      <td>[yep, by, the, pretty, sculpture]</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>ham</td>
+      <td>[yes, princess, are, you, going, to, make, me,...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>ham</td>
+      <td>[welp, apparently, he, retired]</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>ham</td>
+      <td>[havent]</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>ham</td>
+      <td>[i, forgot, 2, ask, ü, all, smth, there, s, a,...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 7785 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate the probabilities P(Spam) and P(Ham)</span>
+
+<span class="c1"># P(Spam) = Label(Spam)/Total </span>
+
+<span class="n">p_spam</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">training_set_clean</span><span class="p">[</span><span class="n">training_set_clean</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;spam&#39;</span><span class="p">])</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">training_set_clean</span><span class="p">)</span>
+<span class="n">p_spam</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.13458950201884254
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># P(Ham) = Label(Ham)/Total</span>
+
+<span class="n">p_ham</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">training_set_clean</span><span class="p">[</span><span class="n">training_set_clean</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;ham&#39;</span><span class="p">])</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">training_set_clean</span><span class="p">)</span>
+<span class="n">p_ham</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.8654104979811574
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate N_Spam; total number of words in all spam messages</span>
+
+<span class="n">n_spam</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">training_set_clean</span><span class="p">[</span><span class="n">training_set_clean</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;spam&#39;</span><span class="p">][</span><span class="s1">&#39;SMS&#39;</span><span class="p">]:</span>
+    <span class="n">n_spam</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="n">n_spam</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>15190
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate N_Ham; total number of words in all ham messages</span>
+
+<span class="n">n_ham</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">training_set_clean</span><span class="p">[</span><span class="n">training_set_clean</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;ham&#39;</span><span class="p">][</span><span class="s1">&#39;SMS&#39;</span><span class="p">]:</span>
+    <span class="n">n_ham</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="n">n_ham</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>57237
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate N_Vocabulary; Total number of unique words in all messages</span>
+
+<span class="n">n_vocabulary</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span>
+<span class="n">n_vocabulary</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>7783
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># In the calculations Laplace smoothing with a value of 1 is used</span>
+
+<span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate the parameters P(wi|Spam) and P(wi|Ham)</span>
+
+<span class="n">p_wi_spam</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">p_wi_ham</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="p">:</span>
+    <span class="n">p_wi_spam</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">p_wi_ham</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    
+<span class="n">spam</span> <span class="o">=</span> <span class="n">training_set_clean</span><span class="p">[</span><span class="n">training_set_clean</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;spam&#39;</span><span class="p">]</span>
+<span class="n">ham</span> <span class="o">=</span> <span class="n">training_set_clean</span><span class="p">[</span><span class="n">training_set_clean</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;ham&#39;</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">vocabulary</span><span class="p">:</span>
+    <span class="n">n_word_given_spam</span> <span class="o">=</span> <span class="n">spam</span><span class="p">[</span><span class="n">word</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">p_word_given_spam</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_word_given_spam</span> <span class="o">+</span> <span class="n">alpha</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">n_spam</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">n_vocabulary</span><span class="p">)</span>
+    <span class="n">p_wi_spam</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_word_given_spam</span>
+    
+    <span class="n">n_word_given_ham</span> <span class="o">=</span> <span class="n">ham</span><span class="p">[</span><span class="n">word</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">p_word_given_ham</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_word_given_ham</span> <span class="o">+</span> <span class="n">alpha</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">n_ham</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">n_vocabulary</span><span class="p">)</span>
+    <span class="n">p_wi_ham</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_word_given_ham</span>
+    
+<span class="n">p_wi_spam</span>    
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;alright&#39;: 4.3529360553693465e-05,
+ &#39;pesky&#39;: 4.3529360553693465e-05,
+ &#39;yelow&#39;: 4.3529360553693465e-05,
+ &#39;cutie&#39;: 4.3529360553693465e-05,
+ &#39;mistake&#39;: 8.705872110738693e-05,
+ &#39;defeat&#39;: 4.3529360553693465e-05,
+ &#39;video&#39;: 0.0012623514560571106,
+ &#39;grow&#39;: 4.3529360553693465e-05,
+ &#39;hallaq&#39;: 4.3529360553693465e-05,
+ &#39;avenge&#39;: 4.3529360553693465e-05,
+ &#39;watts&#39;: 4.3529360553693465e-05,
+ &#39;liao&#39;: 4.3529360553693465e-05,
+ &#39;62468&#39;: 0.0002611761633221608,
+ &#39;general&#39;: 4.3529360553693465e-05,
+ &#39;3030&#39;: 0.0003482348844295477,
+ &#39;ym&#39;: 4.3529360553693465e-05,
+ &#39;winds&#39;: 4.3529360553693465e-05,
+ &#39;alert&#39;: 0.00021764680276846734,
+ &#39;08717509990&#39;: 8.705872110738693e-05,
+ &#39;aries&#39;: 8.705872110738693e-05,
+ &#39;smear&#39;: 4.3529360553693465e-05,
+ &#39;apologize&#39;: 4.3529360553693465e-05,
+ &#39;solve&#39;: 4.3529360553693465e-05,
+ &#39;blah&#39;: 4.3529360553693465e-05,
+ &#39;lacs&#39;: 4.3529360553693465e-05,
+ &#39;vilikkam&#39;: 4.3529360553693465e-05,
+ &#39;87131&#39;: 0.00021764680276846734,
+ &#39;downloaded&#39;: 8.705872110738693e-05,
+ &#39;jada&#39;: 4.3529360553693465e-05,
+ &#39;textbook&#39;: 4.3529360553693465e-05,
+ &#39;g&#39;: 0.0003482348844295477,
+ &#39;pocay&#39;: 4.3529360553693465e-05,
+ &#39;kz&#39;: 4.3529360553693465e-05,
+ &#39;swoop&#39;: 4.3529360553693465e-05,
+ &#39;ft&#39;: 4.3529360553693465e-05,
+ &#39;flirt&#39;: 0.0001305880816610804,
+ &#39;foregate&#39;: 4.3529360553693465e-05,
+ &#39;shld&#39;: 4.3529360553693465e-05,
+ &#39;0871212025016&#39;: 8.705872110738693e-05,
+ &#39;xchat&#39;: 0.00017411744221477386,
+ &#39;illspeak&#39;: 4.3529360553693465e-05,
+ &#39;pixels&#39;: 4.3529360553693465e-05,
+ &#39;baig&#39;: 4.3529360553693465e-05,
+ &#39;946&#39;: 8.705872110738693e-05,
+ &#39;2i&#39;: 4.3529360553693465e-05,
+ &#39;cheyyamo&#39;: 4.3529360553693465e-05,
+ &#39;max6&#39;: 8.705872110738693e-05,
+ &#39;getstop&#39;: 0.0001305880816610804,
+ &#39;buyer&#39;: 4.3529360553693465e-05,
+ &#39;freedom&#39;: 4.3529360553693465e-05,
+ &#39;afew&#39;: 4.3529360553693465e-05,
+ &#39;sagamu&#39;: 4.3529360553693465e-05,
+ &#39;soiree&#39;: 8.705872110738693e-05,
+ &#39;mini&#39;: 8.705872110738693e-05,
+ &#39;09066364349&#39;: 8.705872110738693e-05,
+ &#39;rdy&#39;: 4.3529360553693465e-05,
+ &#39;09066649731from&#39;: 8.705872110738693e-05,
+ &#39;thia&#39;: 4.3529360553693465e-05,
+ &#39;thread&#39;: 4.3529360553693465e-05,
+ &#39;soil&#39;: 4.3529360553693465e-05,
+ &#39;tomo&#39;: 4.3529360553693465e-05,
+ &#39;tonexs&#39;: 8.705872110738693e-05,
+ &#39;apart&#39;: 4.3529360553693465e-05,
+ &#39;helens&#39;: 4.3529360553693465e-05,
+ &#39;ask&#39;: 4.3529360553693465e-05,
+ &#39;gdeve&#39;: 4.3529360553693465e-05,
+ &#39;favorite&#39;: 4.3529360553693465e-05,
+ &#39;predictive&#39;: 4.3529360553693465e-05,
+ &#39;credit&#39;: 0.00030470552387585427,
+ &#39;pax&#39;: 4.3529360553693465e-05,
+ &#39;sura&#39;: 4.3529360553693465e-05,
+ &#39;glorious&#39;: 4.3529360553693465e-05,
+ &#39;worthless&#39;: 4.3529360553693465e-05,
+ &#39;mtmsg&#39;: 8.705872110738693e-05,
+ &#39;tsandcs&#39;: 0.0001305880816610804,
+ &#39;answr&#39;: 4.3529360553693465e-05,
+ &#39;whore&#39;: 4.3529360553693465e-05,
+ &#39;carolina&#39;: 4.3529360553693465e-05,
+ &#39;no&#39;: 0.0025682322726679144,
+ &#39;scenery&#39;: 4.3529360553693465e-05,
+ &#39;1million&#39;: 8.705872110738693e-05,
+ &#39;waht&#39;: 4.3529360553693465e-05,
+ &#39;adam&#39;: 0.0001305880816610804,
+ &#39;suntec&#39;: 4.3529360553693465e-05,
+ &#39;alrite&#39;: 4.3529360553693465e-05,
+ &#39;axis&#39;: 4.3529360553693465e-05,
+ &#39;haiz&#39;: 4.3529360553693465e-05,
+ &#39;disconnect&#39;: 4.3529360553693465e-05,
+ &#39;supreme&#39;: 4.3529360553693465e-05,
+ &#39;messaging&#39;: 0.0001305880816610804,
+ &#39;hours&#39;: 0.00021764680276846734,
+ &#39;hot&#39;: 0.000652940408305402,
+ &#39;ccna&#39;: 4.3529360553693465e-05,
+ &#39;sweetie&#39;: 4.3529360553693465e-05,
+ &#39;tht&#39;: 4.3529360553693465e-05,
+ &#39;fb&#39;: 4.3529360553693465e-05,
+ &#39;oclock&#39;: 4.3529360553693465e-05,
+ &#39;espe&#39;: 4.3529360553693465e-05,
+ &#39;detroit&#39;: 8.705872110738693e-05,
+ &#39;commit&#39;: 4.3529360553693465e-05,
+ &#39;pints&#39;: 4.3529360553693465e-05,
+ &#39;mood&#39;: 4.3529360553693465e-05,
+ &#39;night&#39;: 0.00017411744221477386,
+ &#39;baby&#39;: 0.0001305880816610804,
+ &#39;approve&#39;: 4.3529360553693465e-05,
+ &#39;paid&#39;: 8.705872110738693e-05,
+ &#39;tablet&#39;: 4.3529360553693465e-05,
+ &#39;evening&#39;: 4.3529360553693465e-05,
+ &#39;calm&#39;: 4.3529360553693465e-05,
+ &#39;offc&#39;: 4.3529360553693465e-05,
+ &#39;dificult&#39;: 4.3529360553693465e-05,
+ &#39;0578&#39;: 0.0001305880816610804,
+ &#39;outsomewhere&#39;: 4.3529360553693465e-05,
+ &#39;play&#39;: 0.0005223523266443216,
+ &#39;acl03530150pm&#39;: 8.705872110738693e-05,
+ &#39;videosounds&#39;: 8.705872110738693e-05,
+ &#39;menu&#39;: 8.705872110738693e-05,
+ &#39;mix&#39;: 0.0001305880816610804,
+ &#39;coco&#39;: 4.3529360553693465e-05,
+ &#39;janinexx&#39;: 8.705872110738693e-05,
+ &#39;concentrating&#39;: 4.3529360553693465e-05,
+ &#39;gent&#39;: 8.705872110738693e-05,
+ &#39;surf&#39;: 4.3529360553693465e-05,
+ &#39;flyng&#39;: 8.705872110738693e-05,
+ &#39;nuerologist&#39;: 4.3529360553693465e-05,
+ &#39;sang&#39;: 8.705872110738693e-05,
+ &#39;atrocious&#39;: 4.3529360553693465e-05,
+ &#39;die&#39;: 4.3529360553693465e-05,
+ &#39;u&#39;: 0.005658816871980151,
+ &#39;success&#39;: 4.3529360553693465e-05,
+ &#39;dead&#39;: 4.3529360553693465e-05,
+ &#39;parade&#39;: 4.3529360553693465e-05,
+ &#39;freak&#39;: 4.3529360553693465e-05,
+ &#39;yo&#39;: 4.3529360553693465e-05,
+ &#39;specs&#39;: 4.3529360553693465e-05,
+ &#39;imposter&#39;: 4.3529360553693465e-05,
+ &#39;nike&#39;: 4.3529360553693465e-05,
+ &#39;jay&#39;: 4.3529360553693465e-05,
+ &#39;buying&#39;: 4.3529360553693465e-05,
+ &#39;steed&#39;: 4.3529360553693465e-05,
+ &#39;traveling&#39;: 4.3529360553693465e-05,
+ &#39;display&#39;: 4.3529360553693465e-05,
+ &#39;n8&#39;: 4.3529360553693465e-05,
+ &#39;ringing&#39;: 4.3529360553693465e-05,
+ &#39;audiitions&#39;: 4.3529360553693465e-05,
+ &#39;disasters&#39;: 4.3529360553693465e-05,
+ &#39;imagination&#39;: 4.3529360553693465e-05,
+ &#39;v&#39;: 0.0002611761633221608,
+ &#39;rolled&#39;: 4.3529360553693465e-05,
+ &#39;truro&#39;: 4.3529360553693465e-05,
+ &#39;decimal&#39;: 4.3529360553693465e-05,
+ &#39;standing&#39;: 4.3529360553693465e-05,
+ &#39;9280114&#39;: 8.705872110738693e-05,
+ &#39;begin&#39;: 8.705872110738693e-05,
+ &#39;group&#39;: 4.3529360553693465e-05,
+ &#39;ything&#39;: 4.3529360553693465e-05,
+ &#39;2nd&#39;: 0.0008270578505201758,
+ &#39;speed&#39;: 8.705872110738693e-05,
+ &#39;bam&#39;: 4.3529360553693465e-05,
+ &#39;broadband&#39;: 4.3529360553693465e-05,
+ &#39;allowed&#39;: 4.3529360553693465e-05,
+ &#39;cheating&#39;: 4.3529360553693465e-05,
+ &#39;yetty&#39;: 4.3529360553693465e-05,
+ &#39;4years&#39;: 4.3529360553693465e-05,
+ &#39;nri&#39;: 4.3529360553693465e-05,
+ &#39;prsn&#39;: 4.3529360553693465e-05,
+ &#39;trip&#39;: 0.00017411744221477386,
+ &#39;m221bp&#39;: 0.0001305880816610804,
+ &#39;woohoo&#39;: 4.3529360553693465e-05,
+ &#39;smiles&#39;: 4.3529360553693465e-05,
+ &#39;language&#39;: 4.3529360553693465e-05,
+ &#39;hopeu&#39;: 4.3529360553693465e-05,
+ &#39;predicte&#39;: 4.3529360553693465e-05,
+ &#39;newest&#39;: 0.0001305880816610804,
+ &#39;physics&#39;: 4.3529360553693465e-05,
+ &#39;pay&#39;: 4.3529360553693465e-05,
+ &#39;srs&#39;: 4.3529360553693465e-05,
+ &#39;rebooting&#39;: 4.3529360553693465e-05,
+ &#39;310303&#39;: 8.705872110738693e-05,
+ &#39;chikku&#39;: 4.3529360553693465e-05,
+ &#39;renewal&#39;: 8.705872110738693e-05,
+ &#39;flaked&#39;: 4.3529360553693465e-05,
+ &#39;wrongly&#39;: 4.3529360553693465e-05,
+ &#39;eyes&#39;: 4.3529360553693465e-05,
+ &#39;loads&#39;: 8.705872110738693e-05,
+ &#39;computerless&#39;: 4.3529360553693465e-05,
+ &#39;bears&#39;: 0.0001305880816610804,
+ &#39;hate&#39;: 4.3529360553693465e-05,
+ &#39;nobody&#39;: 4.3529360553693465e-05,
+ &#39;cnn&#39;: 4.3529360553693465e-05,
+ &#39;skye&#39;: 4.3529360553693465e-05,
+ &#39;goodo&#39;: 4.3529360553693465e-05,
+ &#39;earning&#39;: 4.3529360553693465e-05,
+ &#39;4wrd&#39;: 4.3529360553693465e-05,
+ &#39;channel&#39;: 8.705872110738693e-05,
+ &#39;paper&#39;: 4.3529360553693465e-05,
+ &#39;definite&#39;: 4.3529360553693465e-05,
+ &#39;suggestions&#39;: 4.3529360553693465e-05,
+ &#39;situation&#39;: 4.3529360553693465e-05,
+ &#39;sofa&#39;: 4.3529360553693465e-05,
+ &#39;mt&#39;: 8.705872110738693e-05,
+ &#39;juz&#39;: 4.3529360553693465e-05,
+ &#39;a30&#39;: 4.3529360553693465e-05,
+ &#39;prefer&#39;: 4.3529360553693465e-05,
+ &#39;kay&#39;: 4.3529360553693465e-05,
+ &#39;yogasana&#39;: 4.3529360553693465e-05,
+ &#39;maretare&#39;: 4.3529360553693465e-05,
+ &#39;wet&#39;: 8.705872110738693e-05,
+ &#39;personal&#39;: 0.0001305880816610804,
+ &#39;loyalty&#39;: 0.0002611761633221608,
+ &#39;wkly&#39;: 0.0004352936055369347,
+ &#39;69888&#39;: 8.705872110738693e-05,
+ &#39;nigro&#39;: 4.3529360553693465e-05,
+ &#39;24&#39;: 0.00021764680276846734,
+ &#39;has&#39;: 0.00113176337439603,
+ &#39;lst&#39;: 4.3529360553693465e-05,
+ &#39;esplanade&#39;: 4.3529360553693465e-05,
+ &#39;09050000460&#39;: 8.705872110738693e-05,
+ &#39;asking&#39;: 4.3529360553693465e-05,
+ &#39;tops&#39;: 4.3529360553693465e-05,
+ &#39;company&#39;: 8.705872110738693e-05,
+ &#39;07xxxxxxxxx&#39;: 0.00017411744221477386,
+ &#39;spelled&#39;: 4.3529360553693465e-05,
+ &#39;marry&#39;: 4.3529360553693465e-05,
+ &#39;subscriber&#39;: 0.0001305880816610804,
+ &#39;sar&#39;: 4.3529360553693465e-05,
+ &#39;freek&#39;: 4.3529360553693465e-05,
+ &#39;smsservices&#39;: 8.705872110738693e-05,
+ &#39;hu&#39;: 4.3529360553693465e-05,
+ &#39;mostly&#39;: 4.3529360553693465e-05,
+ &#39;bec&#39;: 4.3529360553693465e-05,
+ &#39;yer&#39;: 0.00021764680276846734,
+ &#39;strongly&#39;: 4.3529360553693465e-05,
+ &#39;genus&#39;: 4.3529360553693465e-05,
+ &#39;crucial&#39;: 4.3529360553693465e-05,
+ &#39;wishes&#39;: 4.3529360553693465e-05,
+ &#39;check&#39;: 0.00021764680276846734,
+ &#39;930&#39;: 4.3529360553693465e-05,
+ &#39;8&#39;: 8.705872110738693e-05,
+ &#39;abj&#39;: 4.3529360553693465e-05,
+ &#39;throw&#39;: 4.3529360553693465e-05,
+ &#39;rushing&#39;: 4.3529360553693465e-05,
+ &#39;220&#39;: 0.00017411744221477386,
+ &#39;singing&#39;: 4.3529360553693465e-05,
+ &#39;norcorp&#39;: 8.705872110738693e-05,
+ &#39;lovely&#39;: 4.3529360553693465e-05,
+ &#39;filthy&#39;: 8.705872110738693e-05,
+ &#39;box1146&#39;: 8.705872110738693e-05,
+ &#39;arm&#39;: 4.3529360553693465e-05,
+ &#39;ovulation&#39;: 4.3529360553693465e-05,
+ &#39;bristol&#39;: 4.3529360553693465e-05,
+ &#39;directly&#39;: 4.3529360553693465e-05,
+ &#39;justthought&#39;: 4.3529360553693465e-05,
+ &#39;payback&#39;: 4.3529360553693465e-05,
+ &#39;roles&#39;: 4.3529360553693465e-05,
+ &#39;savings&#39;: 4.3529360553693465e-05,
+ &#39;lac&#39;: 4.3529360553693465e-05,
+ &#39;got&#39;: 0.00021764680276846734,
+ &#39;breakfast&#39;: 4.3529360553693465e-05,
+ &#39;pdate_now&#39;: 8.705872110738693e-05,
+ &#39;140&#39;: 4.3529360553693465e-05,
+ &#39;tampa&#39;: 4.3529360553693465e-05,
+ &#39;log&#39;: 0.00030470552387585427,
+ &#39;loans&#39;: 8.705872110738693e-05,
+ &#39;raining&#39;: 4.3529360553693465e-05,
+ &#39;lucyxx&#39;: 4.3529360553693465e-05,
+ &#39;sudden&#39;: 4.3529360553693465e-05,
+ &#39;greatest&#39;: 4.3529360553693465e-05,
+ &#39;window&#39;: 4.3529360553693465e-05,
+ &#39;08718726270&#39;: 0.0001305880816610804,
+ &#39;vat&#39;: 8.705872110738693e-05,
+ &#39;absolutely&#39;: 4.3529360553693465e-05,
+ &#39;parents&#39;: 4.3529360553693465e-05,
+ &#39;rain&#39;: 4.3529360553693465e-05,
+ &#39;breathe1&#39;: 8.705872110738693e-05,
+ &#39;gn&#39;: 4.3529360553693465e-05,
+ &#39;idiot&#39;: 8.705872110738693e-05,
+ &#39;reference&#39;: 0.00017411744221477386,
+ &#39;oranges&#39;: 8.705872110738693e-05,
+ &#39;jas&#39;: 4.3529360553693465e-05,
+ &#39;silence&#39;: 4.3529360553693465e-05,
+ &#39;402&#39;: 8.705872110738693e-05,
+ &#39;taught&#39;: 4.3529360553693465e-05,
+ &#39;b4u&#39;: 8.705872110738693e-05,
+ &#39;otside&#39;: 4.3529360553693465e-05,
+ &#39;meaningful&#39;: 4.3529360553693465e-05,
+ &#39;ext&#39;: 4.3529360553693465e-05,
+ &#39;champ&#39;: 4.3529360553693465e-05,
+ &#39;petticoatdreams&#39;: 8.705872110738693e-05,
+ &#39;crckt&#39;: 4.3529360553693465e-05,
+ &#39;pert&#39;: 4.3529360553693465e-05,
+ &#39;ertini&#39;: 4.3529360553693465e-05,
+ &#39;087187262701&#39;: 0.00017411744221477386,
+ &#39;range&#39;: 4.3529360553693465e-05,
+ &#39;shite&#39;: 4.3529360553693465e-05,
+ &#39;realised&#39;: 4.3529360553693465e-05,
+ &#39;worlds&#39;: 8.705872110738693e-05,
+ &#39;wrks&#39;: 4.3529360553693465e-05,
+ &#39;parked&#39;: 4.3529360553693465e-05,
+ &#39;fgkslpopw&#39;: 8.705872110738693e-05,
+ &#39;m26&#39;: 8.705872110738693e-05,
+ &#39;dictionary&#39;: 4.3529360553693465e-05,
+ &#39;macha&#39;: 4.3529360553693465e-05,
+ &#39;raksha&#39;: 4.3529360553693465e-05,
+ &#39;suddenly&#39;: 4.3529360553693465e-05,
+ &#39;00&#39;: 0.0004352936055369347,
+ &#39;action&#39;: 0.00021764680276846734,
+ &#39;route&#39;: 4.3529360553693465e-05,
+ &#39;groovying&#39;: 4.3529360553693465e-05,
+ &#39;step&#39;: 4.3529360553693465e-05,
+ &#39;facilities&#39;: 4.3529360553693465e-05,
+ &#39;ru&#39;: 4.3529360553693465e-05,
+ &#39;innings&#39;: 4.3529360553693465e-05,
+ &#39;length&#39;: 4.3529360553693465e-05,
+ &#39;laundry&#39;: 4.3529360553693465e-05,
+ &#39;competition&#39;: 0.0001305880816610804,
+ &#39;sum&#39;: 4.3529360553693465e-05,
+ &#39;unmits&#39;: 4.3529360553693465e-05,
+ &#39;bsn&#39;: 4.3529360553693465e-05,
+ &#39;wants&#39;: 8.705872110738693e-05,
+ &#39;lays&#39;: 4.3529360553693465e-05,
+ &#39;h&#39;: 4.3529360553693465e-05,
+ &#39;84025&#39;: 0.00017411744221477386,
+ &#39;10k&#39;: 0.00017411744221477386,
+ &#39;ammae&#39;: 4.3529360553693465e-05,
+ &#39;sinco&#39;: 4.3529360553693465e-05,
+ &#39;tomeandsaid&#39;: 4.3529360553693465e-05,
+ &#39;teaches&#39;: 4.3529360553693465e-05,
+ &#39;8lb&#39;: 4.3529360553693465e-05,
+ &#39;hearing&#39;: 4.3529360553693465e-05,
+ &#39;dang&#39;: 4.3529360553693465e-05,
+ &#39;mobs&#39;: 8.705872110738693e-05,
+ &#39;hut&#39;: 4.3529360553693465e-05,
+ &#39;fulfil&#39;: 4.3529360553693465e-05,
+ &#39;blame&#39;: 4.3529360553693465e-05,
+ &#39;unhappy&#39;: 4.3529360553693465e-05,
+ &#39;http&#39;: 0.0007835284899664823,
+ &#39;sale&#39;: 0.00021764680276846734,
+ &#39;anyway&#39;: 4.3529360553693465e-05,
+ &#39;evenings&#39;: 4.3529360553693465e-05,
+ &#39;different&#39;: 4.3529360553693465e-05,
+ &#39;however&#39;: 8.705872110738693e-05,
+ &#39;upset&#39;: 4.3529360553693465e-05,
+ &#39;09063458130&#39;: 0.0001305880816610804,
+ &#39;smile&#39;: 4.3529360553693465e-05,
+ &#39;various&#39;: 8.705872110738693e-05,
+ &#39;cam&#39;: 8.705872110738693e-05,
+ &#39;gek1510&#39;: 4.3529360553693465e-05,
+ &#39;operator&#39;: 0.0005223523266443216,
+ &#39;victors&#39;: 4.3529360553693465e-05,
+ &#39;dr&#39;: 4.3529360553693465e-05,
+ &#39;walmart&#39;: 4.3529360553693465e-05,
+ &#39;rp176781&#39;: 8.705872110738693e-05,
+ &#39;meow&#39;: 4.3529360553693465e-05,
+ &#39;forward&#39;: 4.3529360553693465e-05,
+ &#39;useful&#39;: 4.3529360553693465e-05,
+ &#39;0871277810810&#39;: 0.0001305880816610804,
+ &#39;scorable&#39;: 4.3529360553693465e-05,
+ &#39;shsex&#39;: 8.705872110738693e-05,
+ &#39;nowadays&#39;: 4.3529360553693465e-05,
+ &#39;needing&#39;: 4.3529360553693465e-05,
+ &#39;style&#39;: 4.3529360553693465e-05,
+ &#39;prizeawaiting&#39;: 8.705872110738693e-05,
+ &#39;aslamalaikkum&#39;: 4.3529360553693465e-05,
+ &#39;xxxxxxxx&#39;: 4.3529360553693465e-05,
+ &#39;frndship&#39;: 4.3529360553693465e-05,
+ &#39;property&#39;: 4.3529360553693465e-05,
+ &#39;scool&#39;: 4.3529360553693465e-05,
+ &#39;chatter&#39;: 8.705872110738693e-05,
+ &#39;4fil&#39;: 0.0001305880816610804,
+ &#39;discuss&#39;: 4.3529360553693465e-05,
+ &#39;helps&#39;: 4.3529360553693465e-05,
+ &#39;07880867867&#39;: 8.705872110738693e-05,
+ &#39;investigate&#39;: 4.3529360553693465e-05,
+ &#39;idk&#39;: 4.3529360553693465e-05,
+ &#39;35p&#39;: 8.705872110738693e-05,
+ &#39;jones&#39;: 4.3529360553693465e-05,
+ &#39;handset&#39;: 0.00030470552387585427,
+ &#39;prospects&#39;: 4.3529360553693465e-05,
+ &#39;breaking&#39;: 4.3529360553693465e-05,
+ &#39;kidz&#39;: 4.3529360553693465e-05,
+ &#39;sarcasm&#39;: 4.3529360553693465e-05,
+ &#39;community&#39;: 0.0001305880816610804,
+ &#39;bao&#39;: 4.3529360553693465e-05,
+ &#39;pg&#39;: 8.705872110738693e-05,
+ &#39;visitors&#39;: 4.3529360553693465e-05,
+ &#39;waited&#39;: 4.3529360553693465e-05,
+ &#39;yay&#39;: 4.3529360553693465e-05,
+ &#39;declare&#39;: 4.3529360553693465e-05,
+ &#39;rumour&#39;: 4.3529360553693465e-05,
+ &#39;conducts&#39;: 4.3529360553693465e-05,
+ &#39;1x150p&#39;: 0.00021764680276846734,
+ &#39;record&#39;: 4.3529360553693465e-05,
+ &#39;headache&#39;: 4.3529360553693465e-05,
+ &#39;birthdate&#39;: 4.3529360553693465e-05,
+ &#39;rec&#39;: 8.705872110738693e-05,
+ &#39;allalo&#39;: 4.3529360553693465e-05,
+ &#39;antha&#39;: 4.3529360553693465e-05,
+ &#39;fassyole&#39;: 4.3529360553693465e-05,
+ &#39;7&#39;: 0.0004352936055369347,
+ &#39;69696&#39;: 8.705872110738693e-05,
+ &#39;scarcasim&#39;: 4.3529360553693465e-05,
+ &#39;call&#39;: 0.012623514560571106,
+ &#39;ericsson&#39;: 4.3529360553693465e-05,
+ &#39;630&#39;: 4.3529360553693465e-05,
+ &#39;call09050000327&#39;: 0.0001305880816610804,
+ &#39;fact&#39;: 8.705872110738693e-05,
+ &#39;occupied&#39;: 4.3529360553693465e-05,
+ &#39;url&#39;: 4.3529360553693465e-05,
+ &#39;took&#39;: 4.3529360553693465e-05,
+ &#39;nytho&#39;: 4.3529360553693465e-05,
+ &#39;box334sk38ch&#39;: 0.0001305880816610804,
+ &#39;bellearlier&#39;: 4.3529360553693465e-05,
+ &#39;forever&#39;: 4.3529360553693465e-05,
+ &#39;puttin&#39;: 4.3529360553693465e-05,
+ &#39;dhoni&#39;: 4.3529360553693465e-05,
+ &#39;swtheart&#39;: 4.3529360553693465e-05,
+ &#39;dats&#39;: 4.3529360553693465e-05,
+ &#39;prin&#39;: 4.3529360553693465e-05,
+ &#39;lists&#39;: 4.3529360553693465e-05,
+ &#39;sooner&#39;: 4.3529360553693465e-05,
+ &#39;mens&#39;: 8.705872110738693e-05,
+ &#39;eshxxxxxxxxxxx&#39;: 4.3529360553693465e-05,
+ &#39;discreet&#39;: 0.0001305880816610804,
+ &#39;squid&#39;: 4.3529360553693465e-05,
+ &#39;smiley&#39;: 4.3529360553693465e-05,
+ &#39;08718730666&#39;: 0.0001305880816610804,
+ &#39;chatting&#39;: 4.3529360553693465e-05,
+ &#39;mall&#39;: 4.3529360553693465e-05,
+ &#39;avent&#39;: 4.3529360553693465e-05,
+ &#39;dodda&#39;: 4.3529360553693465e-05,
+ &#39;ml&#39;: 4.3529360553693465e-05,
+ &#39;oble&#39;: 4.3529360553693465e-05,
+ &#39;priscilla&#39;: 4.3529360553693465e-05,
+ &#39;woken&#39;: 4.3529360553693465e-05,
+ &#39;lk&#39;: 4.3529360553693465e-05,
+ &#39;elaya&#39;: 4.3529360553693465e-05,
+ &#39;les&#39;: 4.3529360553693465e-05,
+ &#39;siguviri&#39;: 4.3529360553693465e-05,
+ &#39;pours&#39;: 4.3529360553693465e-05,
+ &#39;windows&#39;: 4.3529360553693465e-05,
+ &#39;glo&#39;: 4.3529360553693465e-05,
+ &#39;noice&#39;: 4.3529360553693465e-05,
+ &#39;80878&#39;: 0.0001305880816610804,
+ &#39;vargu&#39;: 4.3529360553693465e-05,
+ &#39;fone&#39;: 0.00021764680276846734,
+ &#39;possessive&#39;: 4.3529360553693465e-05,
+ &#39;seven&#39;: 4.3529360553693465e-05,
+ &#39;walks&#39;: 4.3529360553693465e-05,
+ &#39;hmmm&#39;: 4.3529360553693465e-05,
+ &#39;active&#39;: 0.0001305880816610804,
+ &#39;adventuring&#39;: 4.3529360553693465e-05,
+ &#39;cumin&#39;: 8.705872110738693e-05,
+ &#39;sux&#39;: 4.3529360553693465e-05,
+ &#39;relationship&#39;: 4.3529360553693465e-05,
+ &#39;0089&#39;: 8.705872110738693e-05,
+ &#39;website&#39;: 8.705872110738693e-05,
+ &#39;anythingtomorrow&#39;: 4.3529360553693465e-05,
+ &#39;trying&#39;: 0.0005223523266443216,
+ &#39;waking&#39;: 4.3529360553693465e-05,
+ &#39;machan&#39;: 4.3529360553693465e-05,
+ &#39;gaytextbuddy&#39;: 0.0001305880816610804,
+ &#39;cereals&#39;: 4.3529360553693465e-05,
+ &#39;congratulations&#39;: 0.0005223523266443216,
+ &#39;sorts&#39;: 4.3529360553693465e-05,
+ &#39;things&#39;: 8.705872110738693e-05,
+ &#39;amrita&#39;: 4.3529360553693465e-05,
+ &#39;talent&#39;: 4.3529360553693465e-05,
+ &#39;comp&#39;: 0.0002611761633221608,
+ &#39;hows&#39;: 4.3529360553693465e-05,
+ &#39;rtf&#39;: 8.705872110738693e-05,
+ &#39;jackson&#39;: 4.3529360553693465e-05,
+ &#39;80&#39;: 8.705872110738693e-05,
+ &#39;petey&#39;: 4.3529360553693465e-05,
+ &#39;carryin&#39;: 4.3529360553693465e-05,
+ &#39;correction&#39;: 4.3529360553693465e-05,
+ &#39;child&#39;: 8.705872110738693e-05,
+ &#39;tuesday&#39;: 4.3529360553693465e-05,
+ &#39;nyc&#39;: 4.3529360553693465e-05,
+ &#39;cleared&#39;: 4.3529360553693465e-05,
+ &#39;units&#39;: 4.3529360553693465e-05,
+ &#39;bffs&#39;: 4.3529360553693465e-05,
+ &#39;600&#39;: 8.705872110738693e-05,
+ &#39;brothers&#39;: 4.3529360553693465e-05,
+ &#39;sneham&#39;: 4.3529360553693465e-05,
+ &#39;nitros&#39;: 4.3529360553693465e-05,
+ &#39;xin&#39;: 4.3529360553693465e-05,
+ &#39;8pm&#39;: 8.705872110738693e-05,
+ &#39;meat&#39;: 4.3529360553693465e-05,
+ &#39;shot&#39;: 8.705872110738693e-05,
+ &#39;useless&#39;: 4.3529360553693465e-05,
+ &#39;ystrday&#39;: 4.3529360553693465e-05,
+ &#39;insects&#39;: 4.3529360553693465e-05,
+ &#39;fill&#39;: 4.3529360553693465e-05,
+ &#39;kissing&#39;: 4.3529360553693465e-05,
+ &#39;influx&#39;: 4.3529360553693465e-05,
+ &#39;tms&#39;: 0.0001305880816610804,
+ &#39;banned&#39;: 8.705872110738693e-05,
+ &#39;evrydy&#39;: 4.3529360553693465e-05,
+ &#39;thirunelvali&#39;: 4.3529360553693465e-05,
+ &#39;flies&#39;: 4.3529360553693465e-05,
+ &#39;missin&#39;: 4.3529360553693465e-05,
+ &#39;uk&#39;: 0.002524702912114221,
+ &#39;images&#39;: 4.3529360553693465e-05,
+ &#39;fair&#39;: 4.3529360553693465e-05,
+ &#39;wisheds&#39;: 4.3529360553693465e-05,
+ &#39;fwiw&#39;: 4.3529360553693465e-05,
+ &#39;unnecessarily&#39;: 4.3529360553693465e-05,
+ &#39;tightly&#39;: 4.3529360553693465e-05,
+ &#39;9755&#39;: 8.705872110738693e-05,
+ &#39;woot&#39;: 4.3529360553693465e-05,
+ &#39;onum&#39;: 4.3529360553693465e-05,
+ &#39;there&#39;: 0.0006094110477517085,
+ &#39;smokes&#39;: 4.3529360553693465e-05,
+ &#39;dialling&#39;: 8.705872110738693e-05,
+ &#39;hanging&#39;: 4.3529360553693465e-05,
+ &#39;ringtones&#39;: 0.00039176424498324117,
+ &#39;misundrstud&#39;: 4.3529360553693465e-05,
+ &#39;clocks&#39;: 4.3529360553693465e-05,
+ &#39;rupaul&#39;: 4.3529360553693465e-05,
+ &#39;list&#39;: 4.3529360553693465e-05,
+ &#39;yourself&#39;: 4.3529360553693465e-05,
+ &#39;sarasota&#39;: 4.3529360553693465e-05,
+ &#39;4got&#39;: 4.3529360553693465e-05,
+ &#39;bone&#39;: 4.3529360553693465e-05,
+ &#39;wasted&#39;: 4.3529360553693465e-05,
+ &#39;pink&#39;: 8.705872110738693e-05,
+ &#39;pic&#39;: 0.0005223523266443216,
+ &#39;deleted&#39;: 4.3529360553693465e-05,
+ &#39;cw25wx&#39;: 8.705872110738693e-05,
+ &#39;looks&#39;: 4.3529360553693465e-05,
+ &#39;kb&#39;: 4.3529360553693465e-05,
+ &#39;bevies&#39;: 4.3529360553693465e-05,
+ &#39;thedailydraw&#39;: 8.705872110738693e-05,
+ &#39;177&#39;: 0.0001305880816610804,
+ &#39;sentence&#39;: 4.3529360553693465e-05,
+ &#39;750&#39;: 0.0007399991294127889,
+ &#39;09066364311&#39;: 0.0001305880816610804,
+ &#39;wating&#39;: 4.3529360553693465e-05,
+ &#39;calculation&#39;: 4.3529360553693465e-05,
+ &#39;speak&#39;: 0.0003482348844295477,
+ &#39;archive&#39;: 4.3529360553693465e-05,
+ &#39;colin&#39;: 8.705872110738693e-05,
+ &#39;swan&#39;: 4.3529360553693465e-05,
+ &#39;bc&#39;: 4.3529360553693465e-05,
+ &#39;stable&#39;: 4.3529360553693465e-05,
+ &#39;imagine&#39;: 4.3529360553693465e-05,
+ &#39;callcost150ppmmobilesvary&#39;: 8.705872110738693e-05,
+ &#39;stunning&#39;: 4.3529360553693465e-05,
+ &#39;spun&#39;: 4.3529360553693465e-05,
+ &#39;treacle&#39;: 4.3529360553693465e-05,
+ &#39;avatar&#39;: 4.3529360553693465e-05,
+ &#39;87077&#39;: 0.00039176424498324117,
+ &#39;heard&#39;: 0.0001305880816610804,
+ &#39;200p&#39;: 8.705872110738693e-05,
+ &#39;insurance&#39;: 4.3529360553693465e-05,
+ &#39;basket&#39;: 4.3529360553693465e-05,
+ &#39;uawake&#39;: 4.3529360553693465e-05,
+ &#39;wins&#39;: 4.3529360553693465e-05,
+ &#39;robs&#39;: 4.3529360553693465e-05,
+ &#39;fish&#39;: 4.3529360553693465e-05,
+ &#39;dancing&#39;: 4.3529360553693465e-05,
+ &#39;twenty&#39;: 4.3529360553693465e-05,
+ &#39;cro1327&#39;: 8.705872110738693e-05,
+ &#39;weiyi&#39;: 4.3529360553693465e-05,
+ &#39;nigh&#39;: 4.3529360553693465e-05,
+ &#39;humans&#39;: 4.3529360553693465e-05,
+ &#39;bollox&#39;: 4.3529360553693465e-05,
+ &#39;449071512431&#39;: 8.705872110738693e-05,
+ &#39;sore&#39;: 4.3529360553693465e-05,
+ &#39;messy&#39;: 4.3529360553693465e-05,
+ &#39;comfey&#39;: 4.3529360553693465e-05,
+ &#39;marrge&#39;: 4.3529360553693465e-05,
+ &#39;total&#39;: 8.705872110738693e-05,
+ &#39;capacity&#39;: 4.3529360553693465e-05,
+ &#39;probs&#39;: 4.3529360553693465e-05,
+ &#39;posted&#39;: 4.3529360553693465e-05,
+ &#39;mob&#39;: 0.0009141165716275627,
+ &#39;past&#39;: 4.3529360553693465e-05,
+ &#39;upgrade&#39;: 0.0001305880816610804,
+ &#39;havnt&#39;: 4.3529360553693465e-05,
+ &#39;89938&#39;: 8.705872110738693e-05,
+ &#39;does&#39;: 0.00017411744221477386,
+ &#39;pride&#39;: 4.3529360553693465e-05,
+ &#39;film&#39;: 0.0001305880816610804,
+ &#39;writhing&#39;: 4.3529360553693465e-05,
+ &#39;drpd&#39;: 4.3529360553693465e-05,
+ &#39;3rd&#39;: 4.3529360553693465e-05,
+ &#39;colleagues&#39;: 4.3529360553693465e-05,
+ &#39;dao&#39;: 4.3529360553693465e-05,
+ &#39;sipix&#39;: 0.0002611761633221608,
+ &#39;lv&#39;: 4.3529360553693465e-05,
+ &#39;role&#39;: 4.3529360553693465e-05,
+ &#39;shipping&#39;: 4.3529360553693465e-05,
+ &#39;holby&#39;: 4.3529360553693465e-05,
+ &#39;jan&#39;: 4.3529360553693465e-05,
+ &#39;orange&#39;: 0.0010011752927349498,
+ &#39;considering&#39;: 4.3529360553693465e-05,
+ &#39;4403ldnw1a7rw18&#39;: 8.705872110738693e-05,
+ &#39;residency&#39;: 4.3529360553693465e-05,
+ &#39;sony&#39;: 0.00030470552387585427,
+ &#39;starve&#39;: 4.3529360553693465e-05,
+ &#39;turn&#39;: 8.705872110738693e-05,
+ &#39;tke&#39;: 4.3529360553693465e-05,
+ &#39;2mro&#39;: 4.3529360553693465e-05,
+ &#39;till&#39;: 0.00017411744221477386,
+ &#39;seing&#39;: 4.3529360553693465e-05,
+ &#39;doll&#39;: 4.3529360553693465e-05,
+ &#39;tactless&#39;: 4.3529360553693465e-05,
+ &#39;land&#39;: 0.0006964697688590954,
+ &#39;town&#39;: 0.00017411744221477386,
+ &#39;kusruthi&#39;: 4.3529360553693465e-05,
+ &#39;walsall&#39;: 4.3529360553693465e-05,
+ &#39;srsly&#39;: 4.3529360553693465e-05,
+ &#39;occurs&#39;: 4.3529360553693465e-05,
+ &#39;waheed&#39;: 4.3529360553693465e-05,
+ &#39;pretty&#39;: 4.3529360553693465e-05,
+ &#39;comes&#39;: 0.0001305880816610804,
+ &#39;scallies&#39;: 8.705872110738693e-05,
+ &#39;bbq&#39;: 4.3529360553693465e-05,
+ &#39;sleep&#39;: 4.3529360553693465e-05,
+ &#39;satisfy&#39;: 8.705872110738693e-05,
+ &#39;butting&#39;: 4.3529360553693465e-05,
+ &#39;dancin&#39;: 4.3529360553693465e-05,
+ &#39;09058091854&#39;: 0.0001305880816610804,
+ &#39;death&#39;: 4.3529360553693465e-05,
+ &#39;sun0819&#39;: 8.705872110738693e-05,
+ &#39;costume&#39;: 4.3529360553693465e-05,
+ &#39;avin&#39;: 4.3529360553693465e-05,
+ &#39;woould&#39;: 4.3529360553693465e-05,
+ &#39;afghanistan&#39;: 4.3529360553693465e-05,
+ &#39;js&#39;: 4.3529360553693465e-05,
+ &#39;sehwag&#39;: 4.3529360553693465e-05,
+ &#39;because&#39;: 0.0001305880816610804,
+ &#39;home&#39;: 8.705872110738693e-05,
+ &#39;07786200117&#39;: 8.705872110738693e-05,
+ &#39;drugs&#39;: 4.3529360553693465e-05,
+ &#39;data&#39;: 4.3529360553693465e-05,
+ &#39;tron&#39;: 4.3529360553693465e-05,
+ &#39;kip&#39;: 4.3529360553693465e-05,
+ &#39;abel&#39;: 4.3529360553693465e-05,
+ &#39;rounder&#39;: 4.3529360553693465e-05,
+ &#39;easy&#39;: 0.00047882296609062813,
+ &#39;map&#39;: 4.3529360553693465e-05,
+ &#39;companion&#39;: 4.3529360553693465e-05,
+ &#39;goodmorning&#39;: 4.3529360553693465e-05,
+ &#39;upto&#39;: 8.705872110738693e-05,
+ &#39;mapquest&#39;: 4.3529360553693465e-05,
+ &#39;sentiment&#39;: 4.3529360553693465e-05,
+ &#39;melt&#39;: 4.3529360553693465e-05,
+ &#39;hurts&#39;: 4.3529360553693465e-05,
+ &#39;sachin&#39;: 4.3529360553693465e-05,
+ &#39;endowed&#39;: 4.3529360553693465e-05,
+ &#39;sucks&#39;: 4.3529360553693465e-05,
+ &#39;wit&#39;: 4.3529360553693465e-05,
+ &#39;really&#39;: 8.705872110738693e-05,
+ &#39;hopes&#39;: 4.3529360553693465e-05,
+ &#39;milk&#39;: 4.3529360553693465e-05,
+ &#39;bsnl&#39;: 4.3529360553693465e-05,
+ &#39;reflection&#39;: 4.3529360553693465e-05,
+ &#39;checking&#39;: 4.3529360553693465e-05,
+ &#39;us&#39;: 0.00039176424498324117,
+ &#39;christmas&#39;: 8.705872110738693e-05,
+ &#39;shaking&#39;: 4.3529360553693465e-05,
+ &#39;thot&#39;: 4.3529360553693465e-05,
+ &#39;pokkiri&#39;: 4.3529360553693465e-05,
+ &#39;180&#39;: 4.3529360553693465e-05,
+ &#39;toyota&#39;: 4.3529360553693465e-05,
+ &#39;confirmd&#39;: 4.3529360553693465e-05,
+ &#39;position&#39;: 4.3529360553693465e-05,
+ &#39;kano&#39;: 4.3529360553693465e-05,
+ &#39;flavour&#39;: 4.3529360553693465e-05,
+ &#39;school&#39;: 4.3529360553693465e-05,
+ &#39;da&#39;: 4.3529360553693465e-05,
+ &#39;dislikes&#39;: 4.3529360553693465e-05,
+ &#39;raji&#39;: 4.3529360553693465e-05,
+ &#39;smash&#39;: 4.3529360553693465e-05,
+ &#39;abbey&#39;: 4.3529360553693465e-05,
+ &#39;bleak&#39;: 4.3529360553693465e-05,
+ &#39;havent&#39;: 4.3529360553693465e-05,
+ &#39;phrase&#39;: 4.3529360553693465e-05,
+ &#39;brainy&#39;: 4.3529360553693465e-05,
+ &#39;09050002311&#39;: 8.705872110738693e-05,
+ &#39;upon&#39;: 4.3529360553693465e-05,
+ &#39;yan&#39;: 4.3529360553693465e-05,
+ &#39;50award&#39;: 8.705872110738693e-05,
+ &#39;wo&#39;: 4.3529360553693465e-05,
+ &#39;stores&#39;: 4.3529360553693465e-05,
+ &#39;losing&#39;: 4.3529360553693465e-05,
+ &#39;beneath&#39;: 4.3529360553693465e-05,
+ &#39;walkin&#39;: 4.3529360553693465e-05,
+ &#39;ship&#39;: 4.3529360553693465e-05,
+ &#39;whom&#39;: 4.3529360553693465e-05,
+ &#39;meal&#39;: 8.705872110738693e-05,
+ &#39;le&#39;: 8.705872110738693e-05,
+ &#39;duvet&#39;: 4.3529360553693465e-05,
+ &#39;945&#39;: 4.3529360553693465e-05,
+ &#39;olayiwola&#39;: 4.3529360553693465e-05,
+ &#39;wocay&#39;: 4.3529360553693465e-05,
+ &#39;15pm&#39;: 4.3529360553693465e-05,
+ &#39;sos&#39;: 4.3529360553693465e-05,
+ &#39;receiving&#39;: 0.0001305880816610804,
+ &#39;wml&#39;: 0.0001305880816610804,
+ &#39;closes&#39;: 4.3529360553693465e-05,
+ &#39;the&#39;: 0.006877638967483567,
+ &#39;mwahs&#39;: 4.3529360553693465e-05,
+ &#39;dating&#39;: 0.0007399991294127889,
+ &#39;chapter&#39;: 4.3529360553693465e-05,
+ &#39;grins&#39;: 4.3529360553693465e-05,
+ &#39;sac&#39;: 4.3529360553693465e-05,
+ &#39;hesitate&#39;: 4.3529360553693465e-05,
+ &#39;ji&#39;: 4.3529360553693465e-05,
+ &#39;cast&#39;: 8.705872110738693e-05,
+ &#39;mail&#39;: 4.3529360553693465e-05,
+ &#39;eight&#39;: 4.3529360553693465e-05,
+ &#39;sense&#39;: 4.3529360553693465e-05,
+ &#39;bfore&#39;: 4.3529360553693465e-05,
+ &#39;mahaveer&#39;: 4.3529360553693465e-05,
+ &#39;more&#39;: 0.0008705872110738694,
+ &#39;lap&#39;: 4.3529360553693465e-05,
+ &#39;slurp&#39;: 4.3529360553693465e-05,
+ &#39;hillsborough&#39;: 4.3529360553693465e-05,
+ &#39;23f&#39;: 8.705872110738693e-05,
+ &#39;woodland&#39;: 4.3529360553693465e-05,
+ &#39;surgical&#39;: 4.3529360553693465e-05,
+ &#39;oli&#39;: 4.3529360553693465e-05,
+ &#39;snot&#39;: 4.3529360553693465e-05,
+ &#39;rg21&#39;: 8.705872110738693e-05,
+ &#39;9t&#39;: 4.3529360553693465e-05,
+ &#39;mmmmmmm&#39;: 4.3529360553693465e-05,
+ &#39;within&#39;: 0.00030470552387585427,
+ &#39;texas&#39;: 4.3529360553693465e-05,
+ &#39;timings&#39;: 4.3529360553693465e-05,
+ &#39;relatives&#39;: 4.3529360553693465e-05,
+ &#39;couple&#39;: 8.705872110738693e-05,
+ &#39;bless&#39;: 4.3529360553693465e-05,
+ &#39;such&#39;: 4.3529360553693465e-05,
+ &#39;spent&#39;: 4.3529360553693465e-05,
+ &#39;speciale&#39;: 8.705872110738693e-05,
+ &#39;batch&#39;: 4.3529360553693465e-05,
+ &#39;margin&#39;: 8.705872110738693e-05,
+ &#39;tmorrow&#39;: 4.3529360553693465e-05,
+ &#39;back&#39;: 0.0009141165716275627,
+ &#39;dance&#39;: 4.3529360553693465e-05,
+ &#39;access&#39;: 0.0002611761633221608,
+ &#39;ileave&#39;: 4.3529360553693465e-05,
+ &#39;mornin&#39;: 4.3529360553693465e-05,
+ &#39;be&#39;: 0.0018282331432551255,
+ &#39;during&#39;: 8.705872110738693e-05,
+ &#39;work&#39;: 0.00017411744221477386,
+ &#39;89693&#39;: 0.0001305880816610804,
+ &#39;steps&#39;: 4.3529360553693465e-05,
+ &#39;andrews&#39;: 4.3529360553693465e-05,
+ &#39;decision&#39;: 4.3529360553693465e-05,
+ &#39;2optout&#39;: 0.0002611761633221608,
+ &#39;promises&#39;: 4.3529360553693465e-05,
+ &#39;brisk&#39;: 4.3529360553693465e-05,
+ &#39;promotion&#39;: 8.705872110738693e-05,
+ &#39;culdnt&#39;: 4.3529360553693465e-05,
+ &#39;flying&#39;: 4.3529360553693465e-05,
+ &#39;roller&#39;: 4.3529360553693465e-05,
+ &#39;hvae&#39;: 8.705872110738693e-05,
+ &#39;expires&#39;: 0.000565881687198015,
+ &#39;gd&#39;: 4.3529360553693465e-05,
+ &#39;surprised&#39;: 4.3529360553693465e-05,
+ &#39;chad&#39;: 4.3529360553693465e-05,
+ &#39;75max&#39;: 8.705872110738693e-05,
+ &#39;degree&#39;: 4.3529360553693465e-05,
+ &#39;oil&#39;: 4.3529360553693465e-05,
+ &#39;cnl&#39;: 8.705872110738693e-05,
+ &#39;memory&#39;: 4.3529360553693465e-05,
+ &#39;keen&#39;: 4.3529360553693465e-05,
+ &#39;belive&#39;: 4.3529360553693465e-05,
+ &#39;erode&#39;: 4.3529360553693465e-05,
+ &#39;sankatmochan&#39;: 4.3529360553693465e-05,
+ &#39;ffectionate&#39;: 4.3529360553693465e-05,
+ &#39;yourjob&#39;: 4.3529360553693465e-05,
+ &#39;ignoring&#39;: 4.3529360553693465e-05,
+ &#39;plz&#39;: 4.3529360553693465e-05,
+ &#39;marriage&#39;: 4.3529360553693465e-05,
+ &#39;lifpartnr&#39;: 4.3529360553693465e-05,
+ &#39;09061743386&#39;: 8.705872110738693e-05,
+ &#39;telephone&#39;: 8.705872110738693e-05,
+ &#39;inclusive&#39;: 0.0002611761633221608,
+ &#39;das&#39;: 4.3529360553693465e-05,
+ &#39;resort&#39;: 4.3529360553693465e-05,
+ &#39;souveniers&#39;: 4.3529360553693465e-05,
+ &#39;headset&#39;: 8.705872110738693e-05,
+ &#39;terrorist&#39;: 4.3529360553693465e-05,
+ &#39;prepare&#39;: 4.3529360553693465e-05,
+ &#39;jokin&#39;: 4.3529360553693465e-05,
+ &#39;wen&#39;: 4.3529360553693465e-05,
+ &#39;blessing&#39;: 4.3529360553693465e-05,
+ &#39;ghost&#39;: 0.0001305880816610804,
+ &#39;hold&#39;: 4.3529360553693465e-05,
+ &#39;dentists&#39;: 4.3529360553693465e-05,
+ &#39;desparate&#39;: 4.3529360553693465e-05,
+ &#39;wanna&#39;: 0.00030470552387585427,
+ &#39;engagement&#39;: 4.3529360553693465e-05,
+ &#39;pix&#39;: 0.00017411744221477386,
+ &#39;lips&#39;: 4.3529360553693465e-05,
+ &#39;ugh&#39;: 4.3529360553693465e-05,
+ &#39;fren&#39;: 4.3529360553693465e-05,
+ &#39;aunts&#39;: 4.3529360553693465e-05,
+ &#39;toughest&#39;: 4.3529360553693465e-05,
+ &#39;itz&#39;: 4.3529360553693465e-05,
+ &#39;stories&#39;: 8.705872110738693e-05,
+ &#39;onbus&#39;: 4.3529360553693465e-05,
+ &#39;parties&#39;: 8.705872110738693e-05,
+ &#39;butt&#39;: 4.3529360553693465e-05,
+ &#39;tsunamis&#39;: 4.3529360553693465e-05,
+ &#39;uploaded&#39;: 4.3529360553693465e-05,
+ &#39;noooooooo&#39;: 4.3529360553693465e-05,
+ &#39;others&#39;: 4.3529360553693465e-05,
+ &#39;sex&#39;: 0.0004352936055369347,
+ &#39;wats&#39;: 4.3529360553693465e-05,
+ &#39;biggest&#39;: 0.0001305880816610804,
+ &#39;teacher&#39;: 4.3529360553693465e-05,
+ &#39;hotels&#39;: 0.0001305880816610804,
+ &#39;wil&#39;: 4.3529360553693465e-05,
+ &#39;sh&#39;: 4.3529360553693465e-05,
+ &#39;unconsciously&#39;: 4.3529360553693465e-05,
+ &#39;chase&#39;: 4.3529360553693465e-05,
+ &#39;glad&#39;: 4.3529360553693465e-05,
+ &#39;7cfca1a&#39;: 8.705872110738693e-05,
+ &#39;1146&#39;: 8.705872110738693e-05,
+ &#39;would&#39;: 0.00021764680276846734,
+ &#39;atural&#39;: 4.3529360553693465e-05,
+ &#39;posible&#39;: 4.3529360553693465e-05,
+ &#39;workand&#39;: 4.3529360553693465e-05,
+ &#39;messenger&#39;: 4.3529360553693465e-05,
+ &#39;yours&#39;: 0.0006094110477517085,
+ &#39;centre&#39;: 4.3529360553693465e-05,
+ &#39;gone&#39;: 4.3529360553693465e-05,
+ &#39;careers&#39;: 0.0001305880816610804,
+ &#39;stomach&#39;: 4.3529360553693465e-05,
+ &#39;await&#39;: 0.000652940408305402,
+ &#39;makin&#39;: 4.3529360553693465e-05,
+ &#39;snuggles&#39;: 4.3529360553693465e-05,
+ &#39;nurses&#39;: 4.3529360553693465e-05,
+ &#39;sunlight&#39;: 4.3529360553693465e-05,
+ &#39;cakes&#39;: 4.3529360553693465e-05,
+ &#39;youphone&#39;: 4.3529360553693465e-05,
+ &#39;keeping&#39;: 4.3529360553693465e-05,
+ &#39;rencontre&#39;: 4.3529360553693465e-05,
+ &#39;150p16&#39;: 0.0001305880816610804,
+ &#39;leh&#39;: 4.3529360553693465e-05,
+ &#39;07801543489&#39;: 8.705872110738693e-05,
+ &#39;screaming&#39;: 4.3529360553693465e-05,
+ &#39;paypal&#39;: 4.3529360553693465e-05,
+ &#39;0207&#39;: 0.00017411744221477386,
+ &#39;sn&#39;: 8.705872110738693e-05,
+ &#39;dai&#39;: 4.3529360553693465e-05,
+ &#39;kindly&#39;: 4.3529360553693465e-05,
+ &#39;womdarfull&#39;: 4.3529360553693465e-05,
+ &#39;activities&#39;: 4.3529360553693465e-05,
+ &#39;ache&#39;: 4.3529360553693465e-05,
+ &#39;skins&#39;: 8.705872110738693e-05,
+ &#39;jewelry&#39;: 4.3529360553693465e-05,
+ &#39;sday&#39;: 4.3529360553693465e-05,
+ &#39;tnc&#39;: 0.0001305880816610804,
+ &#39;merememberin&#39;: 4.3529360553693465e-05,
+ &#39;mummy&#39;: 4.3529360553693465e-05,
+ &#39;january&#39;: 8.705872110738693e-05,
+ &#39;jiu&#39;: 4.3529360553693465e-05,
+ &#39;elsewhere&#39;: 4.3529360553693465e-05,
+ &#39;alerts&#39;: 8.705872110738693e-05,
+ &#39;shining&#39;: 4.3529360553693465e-05,
+ &#39;img&#39;: 8.705872110738693e-05,
+ &#39;150pm&#39;: 0.00030470552387585427,
+ &#39;swatch&#39;: 4.3529360553693465e-05,
+ &#39;inlude&#39;: 4.3529360553693465e-05,
+ &#39;forwarding&#39;: 4.3529360553693465e-05,
+ &#39;bites&#39;: 4.3529360553693465e-05,
+ &#39;listening&#39;: 8.705872110738693e-05,
+ &#39;wah&#39;: 4.3529360553693465e-05,
+ &#39;market&#39;: 4.3529360553693465e-05,
+ &#39;poured&#39;: 4.3529360553693465e-05,
+ &#39;specialisation&#39;: 4.3529360553693465e-05,
+ &#39;087123002209am&#39;: 8.705872110738693e-05,
+ &#39;poboxox36504w45wq&#39;: 8.705872110738693e-05,
+ &#39;whn&#39;: 4.3529360553693465e-05,
+ &#39;aids&#39;: 4.3529360553693465e-05,
+ &#39;sighs&#39;: 4.3529360553693465e-05,
+ &#39;mid&#39;: 8.705872110738693e-05,
+ &#39;sharing&#39;: 4.3529360553693465e-05,
+ &#39;loved&#39;: 4.3529360553693465e-05,
+ &#39;appt&#39;: 4.3529360553693465e-05,
+ &#39;sudn&#39;: 4.3529360553693465e-05,
+ &#39;4041&#39;: 8.705872110738693e-05,
+ &#39;suganya&#39;: 4.3529360553693465e-05,
+ &#39;scenario&#39;: 4.3529360553693465e-05,
+ &#39;bar&#39;: 4.3529360553693465e-05,
+ &#39;joys&#39;: 4.3529360553693465e-05,
+ &#39;gosh&#39;: 4.3529360553693465e-05,
+ &#39;shirts&#39;: 4.3529360553693465e-05,
+ &#39;jess&#39;: 4.3529360553693465e-05,
+ &#39;kingdom&#39;: 8.705872110738693e-05,
+ &#39;09066361921&#39;: 8.705872110738693e-05,
+ &#39;error&#39;: 8.705872110738693e-05,
+ &#39;40&#39;: 0.0001305880816610804,
+ &#39;affection&#39;: 4.3529360553693465e-05,
+ &#39;photos&#39;: 4.3529360553693465e-05,
+ &#39;into&#39;: 0.00021764680276846734,
+ &#39;psychiatrist&#39;: 4.3529360553693465e-05,
+ &#39;cusoon&#39;: 4.3529360553693465e-05,
+ &#39;certificate&#39;: 4.3529360553693465e-05,
+ &#39;kidding&#39;: 4.3529360553693465e-05,
+ &#39;tone&#39;: 0.002219997388238367,
+ &#39;bathing&#39;: 4.3529360553693465e-05,
+ &#39;4my&#39;: 4.3529360553693465e-05,
+ &#39;fancies&#39;: 0.0001305880816610804,
+ &#39;scammers&#39;: 8.705872110738693e-05,
+ &#39;shah&#39;: 4.3529360553693465e-05,
+ &#39;salad&#39;: 4.3529360553693465e-05,
+ &#39;pthis&#39;: 4.3529360553693465e-05,
+ &#39;lovin&#39;: 4.3529360553693465e-05,
+ &#39;bk&#39;: 4.3529360553693465e-05,
+ &#39;fav&#39;: 8.705872110738693e-05,
+ &#39;page&#39;: 8.705872110738693e-05,
+ &#39;contains&#39;: 4.3529360553693465e-05,
+ &#39;experiment&#39;: 4.3529360553693465e-05,
+ &#39;lighters&#39;: 4.3529360553693465e-05,
+ &#39;woulda&#39;: 4.3529360553693465e-05,
+ &#39;replied&#39;: 8.705872110738693e-05,
+ &#39;exact&#39;: 4.3529360553693465e-05,
+ &#39;weather&#39;: 4.3529360553693465e-05,
+ &#39;sunscreen&#39;: 4.3529360553693465e-05,
+ &#39;50p&#39;: 0.0003482348844295477,
+ &#39;vaazhthukkal&#39;: 4.3529360553693465e-05,
+ &#39;sis&#39;: 4.3529360553693465e-05,
+ &#39;shakespeare&#39;: 4.3529360553693465e-05,
+ &#39;ey&#39;: 4.3529360553693465e-05,
+ &#39;changing&#39;: 4.3529360553693465e-05,
+ &#39;happening&#39;: 4.3529360553693465e-05,
+ &#39;ruthful&#39;: 4.3529360553693465e-05,
+ &#39;cann&#39;: 4.3529360553693465e-05,
+ &#39;sometext&#39;: 4.3529360553693465e-05,
+ &#39;wylie&#39;: 4.3529360553693465e-05,
+ &#39;09050280520&#39;: 8.705872110738693e-05,
+ &#39;billing&#39;: 8.705872110738693e-05,
+ &#39;anniversary&#39;: 4.3529360553693465e-05,
+ &#39;08001950382&#39;: 0.0001305880816610804,
+ &#39;chicken&#39;: 4.3529360553693465e-05,
+ &#39;local&#39;: 0.0002611761633221608,
+ &#39;brain&#39;: 4.3529360553693465e-05,
+ &#39;finally&#39;: 8.705872110738693e-05,
+ &#39;fab&#39;: 4.3529360553693465e-05,
+ &#39;eachother&#39;: 4.3529360553693465e-05,
+ &#39;cards&#39;: 4.3529360553693465e-05,
+ &#39;slots&#39;: 4.3529360553693465e-05,
+ &#39;everybody&#39;: 4.3529360553693465e-05,
+ &#39;snappy&#39;: 8.705872110738693e-05,
+ &#39;iriver&#39;: 4.3529360553693465e-05,
+ &#39;that2worzels&#39;: 4.3529360553693465e-05,
+ &#39;discussed&#39;: 4.3529360553693465e-05,
+ &#39;guai&#39;: 4.3529360553693465e-05,
+ &#39;pockets&#39;: 4.3529360553693465e-05,
+ &#39;shudvetold&#39;: 4.3529360553693465e-05,
+ &#39;sugababes&#39;: 8.705872110738693e-05,
+ &#39;studying&#39;: 4.3529360553693465e-05,
+ &#39;box39822&#39;: 0.00021764680276846734,
+ &#39;curious&#39;: 4.3529360553693465e-05,
+ &#39;reserved&#39;: 4.3529360553693465e-05,
+ &#39;snogs&#39;: 4.3529360553693465e-05,
+ &#39;submitting&#39;: 4.3529360553693465e-05,
+ &#39;problem&#39;: 4.3529360553693465e-05,
+ &#39;careabout&#39;: 4.3529360553693465e-05,
+ &#39;w1j6hl&#39;: 0.0004352936055369347,
+ &#39;halla&#39;: 4.3529360553693465e-05,
+ &#39;excuse&#39;: 4.3529360553693465e-05,
+ &#39;tonght&#39;: 4.3529360553693465e-05,
+ &#39;make&#39;: 0.00047882296609062813,
+ &#39;lounge&#39;: 4.3529360553693465e-05,
+ &#39;regretted&#39;: 4.3529360553693465e-05,
+ &#39;reminded&#39;: 4.3529360553693465e-05,
+ &#39;mileage&#39;: 4.3529360553693465e-05,
+ &#39;mila&#39;: 0.0001305880816610804,
+ &#39;travel&#39;: 0.0001305880816610804,
+ &#39;2ez&#39;: 8.705872110738693e-05,
+ &#39;falconerf&#39;: 4.3529360553693465e-05,
+ &#39;whose&#39;: 8.705872110738693e-05,
+ &#39;t&#39;: 0.0031341139598659294,
+ &#39;tahan&#39;: 4.3529360553693465e-05,
+ &#39;breathe&#39;: 4.3529360553693465e-05,
+ &#39;inclu&#39;: 8.705872110738693e-05,
+ &#39;shexy&#39;: 4.3529360553693465e-05,
+ &#39;coccooning&#39;: 4.3529360553693465e-05,
+ &#39;bid&#39;: 0.0003482348844295477,
+ &#39;mys&#39;: 4.3529360553693465e-05,
+ &#39;4info&#39;: 0.00021764680276846734,
+ &#39;season&#39;: 8.705872110738693e-05,
+ &#39;08000938767&#39;: 0.0001305880816610804,
+ &#39;2waxsto&#39;: 4.3529360553693465e-05,
+ &#39;82277&#39;: 0.0002611761633221608,
+ &#39;sickness&#39;: 4.3529360553693465e-05,
+ &#39;barred&#39;: 4.3529360553693465e-05,
+ &#39;sliding&#39;: 4.3529360553693465e-05,
+ &#39;uworld&#39;: 4.3529360553693465e-05,
+ &#39;lotsly&#39;: 4.3529360553693465e-05,
+ ...}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Function to be used as spam filter</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="k">def</span> <span class="nf">classify</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;\W&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+    <span class="n">p_spam_given_message</span> <span class="o">=</span> <span class="n">p_spam</span>
+    <span class="n">p_ham_given_message</span> <span class="o">=</span> <span class="n">p_ham</span>
+    
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">message</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">p_wi_spam</span><span class="p">:</span>
+            <span class="n">p_spam_given_message</span> <span class="o">*=</span> <span class="n">p_wi_spam</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">p_wi_ham</span><span class="p">:</span>
+            <span class="n">p_ham_given_message</span> <span class="o">*=</span> <span class="n">p_wi_ham</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;P(Spam|message):&#39;</span><span class="p">,</span> <span class="n">p_spam_given_message</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;P(Ham|message):&#39;</span><span class="p">,</span> <span class="n">p_ham_given_message</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">p_ham_given_message</span> <span class="o">&gt;</span> <span class="n">p_spam_given_message</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Label: Ham&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">p_ham_given_message</span> <span class="o">&lt;</span> <span class="n">p_spam_given_message</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Label: Spam&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Equal proabilities, have a human classify this!&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">classify</span><span class="p">(</span><span class="s1">&#39;WINNER!! This is the secret code to unlock the money: C3421.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(Spam|message): 1.3481290211300841e-25
+P(Ham|message): 1.9368049028589875e-27
+Label: Spam
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">classify</span><span class="p">(</span><span class="s1">&#39;Sounds good, Tom, then see u there&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(Spam|message): 2.4372375665888117e-25
+P(Ham|message): 3.687530435009238e-21
+Label: Ham
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Test the accuracy of the algorithme</span>
+
+<span class="k">def</span> <span class="nf">classify_test_set</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;\W&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+    <span class="n">p_spam_given_message</span> <span class="o">=</span> <span class="n">p_spam</span>
+    <span class="n">p_ham_given_message</span> <span class="o">=</span> <span class="n">p_ham</span>
+
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">message</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">p_wi_spam</span><span class="p">:</span>
+            <span class="n">p_spam_given_message</span> <span class="o">*=</span> <span class="n">p_wi_spam</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">p_wi_ham</span><span class="p">:</span>
+            <span class="n">p_ham_given_message</span> <span class="o">*=</span> <span class="n">p_wi_ham</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">p_ham_given_message</span> <span class="o">&gt;</span> <span class="n">p_spam_given_message</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;ham&#39;</span>
+    <span class="k">elif</span> <span class="n">p_spam_given_message</span> <span class="o">&gt;</span> <span class="n">p_ham_given_message</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;spam&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;needs human classification&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">test</span><span class="p">[</span><span class="s1">&#39;SMS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">classify_test_set</span><span class="p">)</span>
+<span class="n">test</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Label</th>
+      <th>SMS</th>
+      <th>predicted</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>ham</td>
+      <td>Later i guess. I needa do mcat study too.</td>
+      <td>ham</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>ham</td>
+      <td>But i haf enuff space got like 4 mb...</td>
+      <td>ham</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>spam</td>
+      <td>Had your mobile 10 mths? Update to latest Oran...</td>
+      <td>spam</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>ham</td>
+      <td>All sounds good. Fingers . Makes it difficult ...</td>
+      <td>ham</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>ham</td>
+      <td>All done, all handed in. Don't know if mega sh...</td>
+      <td>ham</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Accuracy of the spam filter</span>
+<span class="n">correct</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">test</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;predicted&#39;</span><span class="p">]:</span>
+        <span class="n">correct</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Correct:&#39;</span><span class="p">,</span> <span class="n">correct</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Incorrect:&#39;</span><span class="p">,</span> <span class="n">total</span> <span class="o">-</span> <span class="n">correct</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accuracy:&#39;</span><span class="p">,</span> <span class="n">correct</span><span class="o">/</span><span class="n">total</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Correct: 1100
+Incorrect: 14
+Accuracy: 0.9874326750448833
+</pre></div>
+</div>
+</div>
+</div>
+<p>The accuracy is close to 98.74%, which is really good. Our spam filter looked at 1,114 messages that it hasn’t seen in training, and classified 1,100 correctly.</p>
+<p>Next Steps
+In this project, we managed to build a spam filter for SMS messages using the multinomial Naive Bayes algorithm. The filter had an accuracy of 98.74% on the test set we used, which is a pretty good result. Our initial goal was an accuracy of over 80%, and we managed to do way better than that.</p>
+<p>Next steps include:</p>
+<ul class="simple">
+<li><p>Analyze the 14 messages that were classified incorrectly and try to figure out why the algorithm classified them incorrectly</p></li>
+<li><p>Make the filtering process more complex by making the algorithm sensitive to letter case</p></li>
+<li><p>Get the project portfolio-ready by using a few tips from our style guide for data science projects.</p></li>
+</ul>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="HandwrittenDigitsClassifierUsingCrossValidation.html" title="previous page">Building A Handwritten Digits Classifier using Cross Validation</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Arnoud Beerepoot<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>
