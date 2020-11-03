@@ -3,8 +3,8 @@
 
 # # Building a Spam Filter with Naive Bayes
 
-# In this project a spam filter is built based on the Naive Bayes algorithm. It will be used to classify SMS messages as spam or non-spam. The spam-filter is being trained with a dataset of 5572 SMS messages that are already classified by humans (The UCI Machine Learning Repository) (https://archive.ics.uci.edu/ml/datasets/sms+spam+collection)
-# See wikipedia for background information (https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
+# In this project a spam filter is built based on the Naive Bayes algorithm. It will be used to classify SMS messages as spam or non-spam. The spam-filter is being trained with a dataset of 5572 SMS messages that are already classified by humans [The UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/sms+spam+collection)
+# See wikipedia for background information [Naive Bayes classifier](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)
 
 # ## Import dataset and analyze the data
 
@@ -13,7 +13,7 @@
 
 import pandas as pd
 
-data = pd.read_csv('SMSSpamCollection', sep='\t', header=None, names=['Label', 'SMS']) 
+data = pd.read_csv('SMSSpamCollection.csv', sep='\t', header=None, names=['Label', 'SMS']) 
 data.info()
 
 
@@ -287,6 +287,8 @@ classify('WINNER!! This is the secret code to unlock the money: C3421.')
 classify('Sounds good, Tom, then see u there')
 
 
+# ## Test accuracy
+
 # In[28]:
 
 
@@ -340,6 +342,8 @@ print('Incorrect:', total - correct)
 print('Accuracy:', correct/total)
 
 
+# ## Conclusion
+
 # 
 # The accuracy is close to 98.74%, which is really good. Our spam filter looked at 1,114 messages that it hasn't seen in training, and classified 1,100 correctly.
 # 
@@ -351,9 +355,3 @@ print('Accuracy:', correct/total)
 # - Analyze the 14 messages that were classified incorrectly and try to figure out why the algorithm classified them incorrectly
 # - Make the filtering process more complex by making the algorithm sensitive to letter case
 # - Get the project portfolio-ready by using a few tips from our style guide for data science projects.
-
-# In[ ]:
-
-
-
-
