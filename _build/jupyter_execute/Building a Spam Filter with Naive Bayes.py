@@ -126,7 +126,7 @@ for item in train['SMS']:
     for word in item:
         vocabulary.append(word)
 vocabulary = list(set(vocabulary))
-vocabulary
+vocabulary[:20]
 
 
 # In[15]:
