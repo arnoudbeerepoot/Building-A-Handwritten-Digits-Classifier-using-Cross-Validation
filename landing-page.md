@@ -2,6 +2,8 @@
 
 On this page I have listed my Jupyter books.
 
+## Building a Spam filter with Naive Bayes
+
 ## Building A Handwritten Digits Classifier using Cross Validation
 
 In this project machine learning using k-fold cross validation is used to build a handwritten digits classifier.
