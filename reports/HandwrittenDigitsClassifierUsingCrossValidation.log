@@ -17,19 +17,26 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
+#import the libraries to be used
 import pandas as pd
-
-data = pd.read_csv('SMSSpamCollection.csv', sep='\t', header=None, names=['Label', 'SMS']) 
-data.info()
+import numpy as np
+import math
+from sklearn.datasets import load_digits
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import cross_val_score, KFold
+from sklearn.utils import shuffle
+import matplotlib.pyplot as plt
+%matplotlib inline
 ------------------
 
 [0;31m---------------------------------------------------------------------------[0m
 [0;31mModuleNotFoundError[0m                       Traceback (most recent call last)
-[0;32m<ipython-input-1-7d3d6697c850>[0m in [0;36m<module>[0;34m[0m
-[0;32m----> 1[0;31m [0;32mimport[0m [0mpandas[0m [0;32mas[0m [0mpd[0m[0;34m[0m[0;34m[0m[0m
-[0m[1;32m      2[0m [0;34m[0m[0m
-[1;32m      3[0m [0mdata[0m [0;34m=[0m [0mpd[0m[0;34m.[0m[0mread_csv[0m[0;34m([0m[0;34m'SMSSpamCollection.csv'[0m[0;34m,[0m [0msep[0m[0;34m=[0m[0;34m'\t'[0m[0;34m,[0m [0mheader[0m[0;34m=[0m[0;32mNone[0m[0;34m,[0m [0mnames[0m[0;34m=[0m[0;34m[[0m[0;34m'Label'[0m[0;34m,[0m [0;34m'SMS'[0m[0;34m][0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
-[1;32m      4[0m [0mdata[0m[0;34m.[0m[0minfo[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0;32m<ipython-input-1-850c60f5bb41>[0m in [0;36m<module>[0;34m[0m
+[1;32m      1[0m [0;31m#import the libraries to be used[0m[0;34m[0m[0;34m[0m[0;34m[0m[0m
+[0;32m----> 2[0;31m [0;32mimport[0m [0mpandas[0m [0;32mas[0m [0mpd[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m      3[0m [0;32mimport[0m [0mnumpy[0m [0;32mas[0m [0mnp[0m[0;34m[0m[0;34m[0m[0m
+[1;32m      4[0m [0;32mimport[0m [0mmath[0m[0;34m[0m[0;34m[0m[0m
+[1;32m      5[0m [0;32mfrom[0m [0msklearn[0m[0;34m.[0m[0mdatasets[0m [0;32mimport[0m [0mload_digits[0m[0;34m[0m[0;34m[0m[0m
 
 [0;31mModuleNotFoundError[0m: No module named 'pandas'
 ModuleNotFoundError: No module named 'pandas'
