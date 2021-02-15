@@ -1,10 +1,8 @@
 # My Jupyter books
 
-On this page I have listed my Jupyter books.
+On this page I have listed my projects in a Jupyter book.
 
-## Building a Spam filter with Naive Bayes
-
-## Building A Handwritten Digits Classifier using Cross Validation
+- Building A Handwritten Digits Classifier using Cross Validation
 
 In this project machine learning using k-fold cross validation is used to build a handwritten digits classifier.
 
@@ -12,3 +10,6 @@ At the start of this project I planned to use the standard library KFold from sk
 As a result the k-nearest neighbor algorithm with cross validation is used to build a handwritten digits classifier. 
 For the cross validation the standard library Kfold is used and besides that I wrote the code myself to get the same results.
 
+- Building a Spam filter with Naive Bayes
+
+In this project a spam filter is built based on the Naive Bayes algorithm. It will be used to classify SMS messages as spam or non-spam. The spam-filter is being trained with a dataset of 5572 SMS messages that are already classified by humans The UCI Machine Learning Repository.
