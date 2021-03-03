@@ -3,11 +3,12 @@
 
 # # Building A Handwritten Digits Classifier using Cross Validation
 
+# ## Introduction
 # In this project machine learning using k-fold cross validation is used to build a handwritten digits classifier.
 # 
 # In machine learning normally a dataset is split in a training set to train the model and a test set to validate the model on data it has never seen before. It is common to use a split of 80/20 for the training/test set. When you don't have a large dataset this will result in a small test set which is only 20% of this data. Cross validation is used to overcome this problem. In cross validation the data is splitted more than ones (k times). As a result after all iterations all data is used as test set as can be seen in the figure below where the data is splitted in 6 folds (k=6).
 # 
-#  <img align="left" src="_images/Cross_validation_k6.PNG">  <br>
+#  <img align="left" src="_images/Cross_validation_k6.png">  <br>
 #  <br>
 #  <br>
 #  <br>
@@ -16,6 +17,8 @@
 # 
 # Splitting the data in a training and test set used for cross validation can be done in several ways. It is possible to use a standard library or you can write the code yourself. At the start of this project I planned to use the standard library KFold from sklearn, but after a while I was curious if it was possible to write the code myself to get the same result. As a result the k-nearest neighbor algorithm with cross validation is used to build a handwritten digits classifier. For the cross validation the standard library Kfold is used and besides that I wrote the code myself to get the same results.
 # 
+
+# ## Prepare the data
 
 # In[1]:
 

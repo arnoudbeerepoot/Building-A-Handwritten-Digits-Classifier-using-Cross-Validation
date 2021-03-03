@@ -210,6 +210,16 @@
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#prepare-the-data">
+   Prepare the data
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#k-nearest-neighbors-algorithm">
    K-nearest neighbors algorithm
   </a>
@@ -232,15 +242,20 @@
                 
   <div class="section" id="building-a-handwritten-digits-classifier-using-cross-validation">
 <h1>Building A Handwritten Digits Classifier using Cross Validation<a class="headerlink" href="#building-a-handwritten-digits-classifier-using-cross-validation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>In this project machine learning using k-fold cross validation is used to build a handwritten digits classifier.</p>
 <p>In machine learning normally a dataset is split in a training set to train the model and a test set to validate the model on data it has never seen before. It is common to use a split of 80/20 for the training/test set. When you don’t have a large dataset this will result in a small test set which is only 20% of this data. Cross validation is used to overcome this problem. In cross validation the data is splitted more than ones (k times). As a result after all iterations all data is used as test set as can be seen in the figure below where the data is splitted in 6 folds (k=6).</p>
-<p><img align="left" src="_images/Cross_validation_k6.PNG">  <br>
+<p><img align="left" src="_images/Cross_validation_k6.png">  <br>
 <br>
 <br>
 <br>
 <br>
 <br></p>
 <p>Splitting the data in a training and test set used for cross validation can be done in several ways. It is possible to use a standard library or you can write the code yourself. At the start of this project I planned to use the standard library KFold from sklearn, but after a while I was curious if it was possible to write the code myself to get the same result. As a result the k-nearest neighbor algorithm with cross validation is used to build a handwritten digits classifier. For the cross validation the standard library Kfold is used and besides that I wrote the code myself to get the same results.</p>
+</div>
+<div class="section" id="prepare-the-data">
+<h2>Prepare the data<a class="headerlink" href="#prepare-the-data" title="Permalink to this headline">¶</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#import the libraries to be used</span>
@@ -623,7 +638,8 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/HandwrittenDigitsClassifierUsingCrossValidation_8_0.png" src="_images/HandwrittenDigitsClassifierUsingCrossValidation_8_0.png" />
+<img alt="_images/HandwrittenDigitsClassifierUsingCrossValidation_9_0.png" src="_images/HandwrittenDigitsClassifierUsingCrossValidation_9_0.png" />
+</div>
 </div>
 </div>
 <div class="section" id="k-nearest-neighbors-algorithm">

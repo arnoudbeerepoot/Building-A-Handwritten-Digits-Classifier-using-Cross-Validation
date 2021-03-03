@@ -238,8 +238,10 @@ for word in vocabulary:
     n_word_given_ham = ham[word].sum()
     p_word_given_ham = (n_word_given_ham + alpha)/(n_ham + alpha * n_vocabulary)
     p_wi_ham[word] = p_word_given_ham
-    
-p_wi_spam    
+
+#Show the first 10 pairs  of the p_wi_spam dictionary    
+first10pairs = {k: p_wi_spam[k] for k in list(p_wi_spam)[:10]}
+first10pairs
 
 
 # In[25]:
